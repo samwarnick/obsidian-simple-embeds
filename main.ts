@@ -1,112 +1,75 @@
-import { App, Modal, Notice, Plugin, PluginSettingTab, Setting } from 'obsidian';
+import { Plugin } from "obsidian";
 
-interface MyPluginSettings {
-	mySetting: string;
+const TWEET_LINK = new RegExp(/https:\/\/twitter\.com\/.+\/(\d+)/);
+const YOUTUBE_LINK = new RegExp(
+  /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/
+);
+
+declare global {
+  interface Window {
+    twttr: any;
+  }
 }
 
-const DEFAULT_SETTINGS: MyPluginSettings = {
-	mySetting: 'default'
-}
+export default class SimpleEmbedPlugin extends Plugin {
+  async onload() {
+    window.twttr = (function (d, s, id) {
+      var js,
+        fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s) as HTMLScriptElement;
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
 
-export default class MyPlugin extends Plugin {
-	settings: MyPluginSettings;
+      t._e = [];
+      t.ready = function (f: any) {
+        t._e.push(f);
+      };
 
-	async onload() {
-		console.log('loading plugin');
+      return t;
+    })(document, "script", "twitter-wjs");
+    const meta = document.createElement("meta");
+    meta.name = "twitter.dnt";
+    meta.content = "on";
+    document.getElementsByTagName("head")[0].appendChild(meta);
 
-		await this.loadSettings();
+    this.registerMarkdownPostProcessor((el, ctx) => {
+      const anchors = el.querySelectorAll("a");
+      anchors.forEach((anchor) => {
+        this._parseAnchor(anchor);
+      });
+    });
+  }
 
-		this.addRibbonIcon('dice', 'Sample Plugin', () => {
-			new Notice('This is a notice!');
-		});
+  onunload() {
+    const twitterScript = document.getElementById("twitter-wjs");
+    twitterScript.parentElement.removeChild(twitterScript);
+  }
 
-		this.addStatusBarItem().setText('Status Bar Text');
+  private _parseAnchor(a: HTMLAnchorElement) {
+    const href = a.getAttribute("href");
+    if (TWEET_LINK.test(href)) {
+      const tweetId = href.match(TWEET_LINK)[1];
+      const tweetContainer = document.createElement("div");
+      tweetContainer.id = `TweetContainer${tweetId}`;
+      a.parentElement.replaceChild(tweetContainer, a);
 
-		this.addCommand({
-			id: 'open-sample-modal',
-			name: 'Open Sample Modal',
-			// callback: () => {
-			// 	console.log('Simple Callback');
-			// },
-			checkCallback: (checking: boolean) => {
-				let leaf = this.app.workspace.activeLeaf;
-				if (leaf) {
-					if (!checking) {
-						new SampleModal(this.app).open();
-					}
-					return true;
-				}
-				return false;
-			}
-		});
-
-		this.addSettingTab(new SampleSettingTab(this.app, this));
-
-		this.registerCodeMirror((cm: CodeMirror.Editor) => {
-			console.log('codemirror', cm);
-		});
-
-		this.registerDomEvent(document, 'click', (evt: MouseEvent) => {
-			console.log('click', evt);
-		});
-
-		this.registerInterval(window.setInterval(() => console.log('setInterval'), 5 * 60 * 1000));
-	}
-
-	onunload() {
-		console.log('unloading plugin');
-	}
-
-	async loadSettings() {
-		this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
-	}
-
-	async saveSettings() {
-		await this.saveData(this.settings);
-	}
-}
-
-class SampleModal extends Modal {
-	constructor(app: App) {
-		super(app);
-	}
-
-	onOpen() {
-		let {contentEl} = this;
-		contentEl.setText('Woah!');
-	}
-
-	onClose() {
-		let {contentEl} = this;
-		contentEl.empty();
-	}
-}
-
-class SampleSettingTab extends PluginSettingTab {
-	plugin: MyPlugin;
-
-	constructor(app: App, plugin: MyPlugin) {
-		super(app, plugin);
-		this.plugin = plugin;
-	}
-
-	display(): void {
-		let {containerEl} = this;
-
-		containerEl.empty();
-
-		containerEl.createEl('h2', {text: 'Settings for my awesome plugin.'});
-
-		new Setting(containerEl)
-			.setName('Setting #1')
-			.setDesc('It\'s a secret')
-			.addText(text => text
-				.setPlaceholder('Enter your secret')
-				.setValue('')
-				.onChange(async (value) => {
-					console.log('Secret: ' + value);
-					this.plugin.settings.mySetting = value;
-					await this.plugin.saveSettings();
-				}));
-	}
+      window.twttr.ready(() => {
+        window.twttr.widgets.createTweet(tweetId, tweetContainer);
+      });
+    } else if (YOUTUBE_LINK.test(href)) {
+      const videoId = href.match(YOUTUBE_LINK)[1];
+      const iframe = document.createElement("iframe");
+      iframe.width = "550";
+      iframe.height = "309";
+      iframe.src = `https://www.youtube.com/embed/${videoId}`;
+      iframe.title = "YouTube video player";
+      iframe.setAttr("frameborder", "0");
+      iframe.allow =
+        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+      a.parentElement.replaceChild(iframe, a);
+    }
+  }
 }

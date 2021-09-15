@@ -1,10 +1,10 @@
 {
-	"id": "obsidian-sample-plugin",
-	"name": "Sample Plugin",
-	"version": "1.0.1",
-	"minAppVersion": "0.9.12",
-	"description": "This is a sample plugin for Obsidian. This plugin demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md/about",
-	"isDesktopOnly": false
+  "id": "simple-embed",
+  "name": "Simple Embed",
+  "version": "0.1.0",
+  "minAppVersion": "0.9.12",
+  "description": "Looks for Twitter and YouTube links and replaces them with embeds when the file is previewed.",
+  "author": "Sam Warnick",
+  "authorUrl": "https://github.com/samwarnick",
+  "isDesktopOnly": false
 }
