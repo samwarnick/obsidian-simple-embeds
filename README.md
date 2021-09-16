@@ -11,6 +11,14 @@ Just add links like you normally would:
 
 ## Screenshots
 
-![](./screenshots/demo.gif)
-![](./screenshots/ios.png)
-![](./screenshots/android.jpg)
+![Simple Embed demo](./screenshots/demo.gif)
+
+_Demo_
+
+![Screenshot of embeds in iOS app](./screenshots/ios.png)
+
+_iOS app_
+
+![Screenshot of embeds in Android app](./screenshots/android.png)
+
+_Android app_
