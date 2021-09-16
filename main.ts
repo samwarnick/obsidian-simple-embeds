@@ -66,27 +66,29 @@ export default class SimpleEmbedPlugin extends Plugin {
 
   private _parseAnchor(a: HTMLAnchorElement) {
     const href = a.getAttribute("href");
+    const container = document.createElement("div");
+    container.classList.add("embed-container");
+    a.parentElement.replaceChild(container, a);
     if (this.settings.replaceTwitterLinks && TWEET_LINK.test(href)) {
       const tweetId = href.match(TWEET_LINK)[1];
-      const tweetContainer = document.createElement("div");
-      tweetContainer.id = `TweetContainer${tweetId}`;
-      a.parentElement.replaceChild(tweetContainer, a);
-
+      container.id = `TweetContainer${tweetId}`;
       window.twttr.ready(() => {
-        console.log("ready");
-        window.twttr.widgets.createTweet(tweetId, tweetContainer);
+        window.twttr.widgets.createTweet(tweetId, container);
       });
     } else if (this.settings.replaceYouTubeLinks && YOUTUBE_LINK.test(href)) {
-      const videoId = href.match(YOUTUBE_LINK)[1];
+      const wrapper = document.createElement("div");
+      wrapper.classList.add("video-wrapper");
       const iframe = document.createElement("iframe");
-      iframe.width = "550";
-      iframe.height = "309";
+
+      const videoId = href.match(YOUTUBE_LINK)[1];
+
       iframe.src = `https://www.youtube.com/embed/${videoId}`;
       iframe.title = "YouTube video player";
       iframe.setAttr("frameborder", "0");
       iframe.allow =
         "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-      a.parentElement.replaceChild(iframe, a);
+      wrapper.appendChild(iframe);
+      container.appendChild(wrapper);
     }
   }
 }
