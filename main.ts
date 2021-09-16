@@ -6,8 +6,8 @@ const YOUTUBE_LINK = new RegExp(
 );
 
 interface Twitter {
-  _e: Function[];
-  ready: (f: Function) => void;
+  _e: (() => void)[];
+  ready: (f: () => void) => void;
   widgets: {
     createTweet: (id: string, container: HTMLElement) => Promise<HTMLElement>;
   };
@@ -38,7 +38,7 @@ export default class SimpleEmbedPlugin extends Plugin {
       fjs.parentNode.insertBefore(js, fjs);
 
       t._e = [];
-      t.ready = function (f: any) {
+      t.ready = function (f: () => void) {
         t._e.push(f);
       };
 
