@@ -1,9 +1,9 @@
 {
-  "id": "simple-embed",
-  "name": "Simple embed",
-  "version": "0.1.0",
+  "id": "simple-embeds",
+  "name": "Simple Embeds",
+  "version": "1.0.0",
   "minAppVersion": "0.9.12",
-  "description": "Looks for Twitter and YouTube links and replaces them with embeds when the file is previewed.",
+  "description": "Replaces Twitter and YouTube links with embeds when previewing a file.",
   "author": "Sam Warnick",
   "authorUrl": "https://github.com/samwarnick",
   "isDesktopOnly": false
