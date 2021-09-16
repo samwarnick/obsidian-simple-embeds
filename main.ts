@@ -75,13 +75,13 @@ export default class SimpleEmbedPlugin extends Plugin {
     const href = a.getAttribute("href");
     const container = document.createElement("div");
     container.classList.add("embed-container");
-    a.parentElement.replaceChild(container, a);
     if (this.settings.replaceTwitterLinks && TWEET_LINK.test(href)) {
       const tweetId = href.match(TWEET_LINK)[1];
       container.id = `TweetContainer${tweetId}`;
       window.twttr.ready(() => {
         window.twttr.widgets.createTweet(tweetId, container);
       });
+      a.parentElement.replaceChild(container, a);
     } else if (this.settings.replaceYouTubeLinks && YOUTUBE_LINK.test(href)) {
       const wrapper = document.createElement("div");
       wrapper.classList.add("video-wrapper");
@@ -96,6 +96,7 @@ export default class SimpleEmbedPlugin extends Plugin {
         "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
       wrapper.appendChild(iframe);
       container.appendChild(wrapper);
+      a.parentElement.replaceChild(container, a);
     }
   }
 }
