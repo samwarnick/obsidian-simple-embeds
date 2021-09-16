@@ -1,4 +1,4 @@
-import { App, Plugin, Setting, PluginSettingTab, MarkdownView } from "obsidian";
+import { App, Plugin, Setting, PluginSettingTab } from "obsidian";
 
 const TWEET_LINK = new RegExp(/https:\/\/twitter\.com\/.+\/(\d+)/);
 const YOUTUBE_LINK = new RegExp(
@@ -18,7 +18,7 @@ declare global {
   }
 }
 
-export default class SimpleEmbedPlugin extends Plugin {
+export default class SimpleEmbedsPlugin extends Plugin {
   settings: PluginSettings;
 
   async onload() {
@@ -112,9 +112,9 @@ const DEFAULT_SETTINGS: PluginSettings = {
 };
 
 class SimpleEmbedPluginSettingTab extends PluginSettingTab {
-  plugin: SimpleEmbedPlugin;
+  plugin: SimpleEmbedsPlugin;
 
-  constructor(app: App, plugin: SimpleEmbedPlugin) {
+  constructor(app: App, plugin: SimpleEmbedsPlugin) {
     super(app, plugin);
     this.plugin = plugin;
   }
