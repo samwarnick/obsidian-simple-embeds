@@ -36,17 +36,6 @@ jobs:
           draft: true
           prerelease: false
 
-      - name: Upload artifacts
-        id: upload-artifacts
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./${{ env.PLUGIN_NAME }}.zip
-          asset_name: ${{ env.PLUGIN_NAME }}-${{ github.ref }}.zip
-          asset_content_type: application/zip
-
       - name: Upload main.js
         id: upload-main
         uses: actions/upload-release-asset@v1
