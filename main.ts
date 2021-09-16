@@ -5,9 +5,16 @@ const YOUTUBE_LINK = new RegExp(
   /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/
 );
 
+interface Twitter {
+  _e: Function[];
+  ready: (f: Function) => void;
+  widgets: {
+    createTweet: (id: string, container: HTMLElement) => Promise<HTMLElement>;
+  };
+}
 declare global {
   interface Window {
-    twttr: any;
+    twttr: Twitter;
   }
 }
 
@@ -23,7 +30,7 @@ export default class SimpleEmbedPlugin extends Plugin {
     window.twttr = (function (d, s, id) {
       var js,
         fjs = d.getElementsByTagName(s)[0],
-        t = window.twttr || {};
+        t = window.twttr || ({} as Twitter);
       if (d.getElementById(id)) return t;
       js = d.createElement(s) as HTMLScriptElement;
       js.id = id;
