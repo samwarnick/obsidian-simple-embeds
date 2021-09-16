@@ -1,6 +1,6 @@
 {
   "id": "simple-embed",
-  "name": "Simple Embed",
+  "name": "Simple embed",
   "version": "0.1.0",
   "minAppVersion": "0.9.12",
   "description": "Looks for Twitter and YouTube links and replaces them with embeds when the file is previewed.",
