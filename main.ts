@@ -26,31 +26,6 @@ export default class SimpleEmbedsPlugin extends Plugin {
     await this.loadSettings();
     this.addSettingTab(new SimpleEmbedPluginSettingTab(this.app, this));
 
-    // Make sure Twitter script is not loaded more than once.
-    window.twttr = (function (d, s, id) {
-      var js,
-        fjs = d.getElementsByTagName(s)[0],
-        t = window.twttr || ({} as Twitter);
-      if (d.getElementById(id)) return t;
-      js = d.createElement(s) as HTMLScriptElement;
-      js.id = id;
-      js.src = "https://platform.twitter.com/widgets.js";
-      fjs.parentNode.insertBefore(js, fjs);
-
-      t._e = [];
-      t.ready = function (f: () => void) {
-        t._e.push(f);
-      };
-
-      return t;
-    })(document, "script", "twitter-wjs");
-
-    // Add global settings for Twitter embeds.
-    const meta = document.createElement("meta");
-    meta.name = "twitter.dnt";
-    meta.content = "on";
-    document.getElementsByTagName("head")[0].appendChild(meta);
-
     this.registerMarkdownPostProcessor((el, ctx) => {
       const anchors = el.querySelectorAll(
         "a.external-link"
@@ -78,6 +53,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     const container = document.createElement("div");
     container.classList.add("embed-container");
     if (this.settings.replaceTwitterLinks && TWEET_LINK.test(href)) {
+      this._ensureTwitterLoaded();
       const tweetId = href.match(TWEET_LINK)[1];
       container.id = `TweetContainer${tweetId}`;
       window.twttr.ready(() => {
@@ -100,6 +76,33 @@ export default class SimpleEmbedsPlugin extends Plugin {
       container.appendChild(wrapper);
       a.parentElement.replaceChild(container, a);
     }
+  }
+
+  private _ensureTwitterLoaded() {
+    window.twttr = (function (d, s, id) {
+      var js,
+        fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || ({} as Twitter);
+      if (d.getElementById(id)) return t;
+      js = d.createElement(s) as HTMLScriptElement;
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
+
+      // Add global settings for Twitter embeds
+
+      const meta = d.createElement("meta");
+      meta.name = "twitter.dnt";
+      meta.content = "on";
+      d.getElementsByTagName("head")[0].appendChild(meta);
+
+      t._e = [];
+      t.ready = function (f: () => void) {
+        t._e.push(f);
+      };
+
+      return t;
+    })(document, "script", "twitter-wjs");
   }
 }
 
