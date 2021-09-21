@@ -71,7 +71,11 @@ export default class SimpleEmbedsPlugin extends Plugin {
       iframe.title = "YouTube video player";
       iframe.setAttr("frameborder", "0");
       iframe.allow =
-        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;";
+      iframe.setAttr(
+        "sandbox",
+        "allow-scripts allow-same-origin allow-presentation allow-popups"
+      );
       wrapper.appendChild(iframe);
       container.appendChild(wrapper);
       a.parentElement.replaceChild(container, a);
