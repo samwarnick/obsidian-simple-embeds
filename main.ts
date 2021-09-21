@@ -52,7 +52,9 @@ export default class SimpleEmbedsPlugin extends Plugin {
     document.getElementsByTagName("head")[0].appendChild(meta);
 
     this.registerMarkdownPostProcessor((el, ctx) => {
-      const anchors = el.querySelectorAll("a");
+      const anchors = el.querySelectorAll(
+        "a.external-link"
+      ) as NodeListOf<HTMLAnchorElement>;
       anchors.forEach((anchor) => {
         this._parseAnchor(anchor);
       });
