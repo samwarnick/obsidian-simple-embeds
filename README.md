@@ -11,14 +11,14 @@ Just add links like you normally would:
 
 ## Screenshots
 
-![Simple Embeds demo](./screenshots/demo.gif)
+![Simple Embeds demo](https://raw.githubusercontent.com/samwarnick/obsidian-simple-embeds/main/screenshots/demo.gif)
 
 _Demo_
 
-![Screenshot of embeds in iOS app](./screenshots/ios.png)
+![Screenshot of embeds in iOS app](https://raw.githubusercontent.com/samwarnick/obsidian-simple-embeds/main/screenshots/ios.png)
 
 _iOS app_
 
-![Screenshot of embeds in Android app](./screenshots/android.png)
+![Screenshot of embeds in Android app](https://raw.githubusercontent.com/samwarnick/obsidian-simple-embeds/main/screenshots/android.png)
 
 _Android app_
