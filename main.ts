@@ -1,6 +1,6 @@
 import { App, Plugin, Setting, PluginSettingTab } from "obsidian";
 
-const TWEET_LINK = new RegExp(/https:\/\/twitter\.com\/.+\/(\d+)/);
+const TWEET_LINK = new RegExp(/https:\/\/(?:mobile\.)?twitter\.com\/.+\/(\d+)/);
 const YOUTUBE_LINK = new RegExp(
   /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/
 );
