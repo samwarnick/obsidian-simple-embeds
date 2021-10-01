@@ -61,6 +61,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
       window.twttr.ready(() => {
         window.twttr.widgets.createTweet(tweetId, container);
       });
+      this._insertEmbed(a, container);
     } else if (this.settings.replaceYouTubeLinks && YOUTUBE_LINK.test(href)) {
       const wrapper = document.createElement("div");
       wrapper.classList.add("video-wrapper");
@@ -79,8 +80,12 @@ export default class SimpleEmbedsPlugin extends Plugin {
       );
       wrapper.appendChild(iframe);
       container.appendChild(wrapper);
+      this._insertEmbed(a, container);
     }
-    if (this.settings.keepLinks) {
+  }
+
+  private _insertEmbed(a: HTMLAnchorElement, container: HTMLElement) {
+    if (this.settings.keepLinksInPreview) {
       a.prepend(container);
     } else {
       a.parentElement.replaceChild(container, a);
@@ -119,14 +124,14 @@ interface PluginSettings {
   replaceTwitterLinks: boolean;
   replaceYouTubeLinks: boolean;
 
-  keepLinks: boolean;
+  keepLinksInPreview: boolean;
 }
 
 const DEFAULT_SETTINGS: PluginSettings = {
   replaceTwitterLinks: true,
   replaceYouTubeLinks: true,
 
-  keepLinks: false,
+  keepLinksInPreview: false,
 };
 
 class SimpleEmbedPluginSettingTab extends PluginSettingTab {
@@ -175,9 +180,9 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
       )
       .addToggle((toggle) => {
         toggle
-          .setValue(this.plugin.settings.keepLinks)
+          .setValue(this.plugin.settings.keepLinksInPreview)
           .onChange(async (value) => {
-            this.plugin.settings.keepLinks = value;
+            this.plugin.settings.keepLinksInPreview = value;
             await this.plugin.saveSettings();
           });
       });
