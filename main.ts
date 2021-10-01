@@ -1,4 +1,4 @@
-import { App, Plugin, Setting, PluginSettingTab } from "obsidian";
+import { App, Plugin, Setting, PluginSettingTab, MarkdownView } from "obsidian";
 
 const TWEET_LINK = new RegExp(/https:\/\/(?:mobile\.)?twitter\.com\/.+\/(\d+)/);
 const YOUTUBE_LINK = new RegExp(
@@ -46,6 +46,8 @@ export default class SimpleEmbedsPlugin extends Plugin {
 
   async saveSettings() {
     await this.saveData(this.settings);
+    const view = this.app.workspace.getActiveViewOfType(MarkdownView);
+    view?.previewMode?.rerender(true);
   }
 
   private _parseAnchor(a: HTMLAnchorElement) {
@@ -59,7 +61,6 @@ export default class SimpleEmbedsPlugin extends Plugin {
       window.twttr.ready(() => {
         window.twttr.widgets.createTweet(tweetId, container);
       });
-      a.parentElement.replaceChild(container, a);
     } else if (this.settings.replaceYouTubeLinks && YOUTUBE_LINK.test(href)) {
       const wrapper = document.createElement("div");
       wrapper.classList.add("video-wrapper");
@@ -78,6 +79,10 @@ export default class SimpleEmbedsPlugin extends Plugin {
       );
       wrapper.appendChild(iframe);
       container.appendChild(wrapper);
+    }
+    if (this.settings.keepLinks) {
+      a.prepend(container);
+    } else {
       a.parentElement.replaceChild(container, a);
     }
   }
@@ -113,11 +118,15 @@ export default class SimpleEmbedsPlugin extends Plugin {
 interface PluginSettings {
   replaceTwitterLinks: boolean;
   replaceYouTubeLinks: boolean;
+
+  keepLinks: boolean;
 }
 
 const DEFAULT_SETTINGS: PluginSettings = {
   replaceTwitterLinks: true,
   replaceYouTubeLinks: true,
+
+  keepLinks: false,
 };
 
 class SimpleEmbedPluginSettingTab extends PluginSettingTab {
@@ -133,24 +142,42 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    new Setting(containerEl)
-      .setName("Replace Twitter links")
-      .addToggle((toggle) => {
-        toggle
-          .setValue(this.plugin.settings.replaceTwitterLinks)
-          .onChange(async (value) => {
-            this.plugin.settings.replaceTwitterLinks = value;
-            await this.plugin.saveSettings();
-          });
-      });
+    containerEl.createEl("h3", { text: "Available Embeds" });
+    containerEl.createEl("p", {
+      text: "Disable to prevent links from source being turned into embeds.",
+      cls: "setting-item-description",
+    });
+
+    new Setting(containerEl).setName("Twitter").addToggle((toggle) => {
+      toggle
+        .setValue(this.plugin.settings.replaceTwitterLinks)
+        .onChange(async (value) => {
+          this.plugin.settings.replaceTwitterLinks = value;
+          await this.plugin.saveSettings();
+        });
+    });
+
+    new Setting(containerEl).setName("YouTube").addToggle((toggle) => {
+      toggle
+        .setValue(this.plugin.settings.replaceYouTubeLinks)
+        .onChange(async (value) => {
+          this.plugin.settings.replaceYouTubeLinks = value;
+          await this.plugin.saveSettings();
+        });
+    });
+
+    containerEl.createEl("h3", { text: "Advanced Settings" });
 
     new Setting(containerEl)
-      .setName("Replace YouTube links")
+      .setName("Keep links in preview")
+      .setDesc(
+        "Insert embeds above the link, instead of replacing the link in the preview."
+      )
       .addToggle((toggle) => {
         toggle
-          .setValue(this.plugin.settings.replaceYouTubeLinks)
+          .setValue(this.plugin.settings.keepLinks)
           .onChange(async (value) => {
-            this.plugin.settings.replaceYouTubeLinks = value;
+            this.plugin.settings.keepLinks = value;
             await this.plugin.saveSettings();
           });
       });
