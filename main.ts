@@ -40,10 +40,15 @@ export default class SimpleEmbedsPlugin extends Plugin {
     const container = document.createElement("div");
     container.classList.add("embed-container");
 
-    for (let source of this.embedSources) {
-      if (source.canHandle(href, this.settings)) {
-        this._insertEmbed(a, source.createEmbed(href, container));
-        return;
+    let embedSource = this.embedSources.find((source) => {
+      return source.canHandle(href, this.settings);
+    });
+
+    if (embedSource) {
+      const replaceWithEmbed = !a.innerText.endsWith("|noembed");
+      a.innerText = a.innerText.replace("|noembed", "");
+      if (replaceWithEmbed) {
+        this._insertEmbed(a, embedSource.createEmbed(href, container));
       }
     }
   }
