@@ -45,10 +45,13 @@ export default class SimpleEmbedsPlugin extends Plugin {
     });
 
     if (embedSource) {
-      const replaceWithEmbed = !a.innerText.endsWith("|noembed");
-      a.innerText = a.innerText.replace("|noembed", "");
+      const replaceWithEmbed = this.settings.disableAutomaticEmbeds
+        ? a.innerText.endsWith("|embed")
+        : !a.innerText.endsWith("|noembed");
+      a.innerText = a.innerText.replace("|noembed", "").replace("|embed", "");
       if (replaceWithEmbed) {
-        this._insertEmbed(a, embedSource.createEmbed(href, container));
+        const embed = embedSource.createEmbed(href, container);
+        this._insertEmbed(a, embed);
       }
     }
   }
@@ -75,11 +78,17 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
 
     containerEl.empty();
 
-    containerEl.createEl("h3", { text: "Available Embeds" });
-    containerEl.createEl("p", {
-      text: "Disable to prevent links from source being turned into embeds.",
-      cls: "setting-item-description",
-    });
+    containerEl.createEl("h3", { text: "Available Embed Sources" });
+    containerEl.createEl(
+      "p",
+      {
+        cls: "setting-item-description",
+      },
+      (el) => {
+        el.innerHTML =
+          "Disable to prevent <em>all</em> links from source ever being turned into embeds. To disable an individual link, add <code>|noembed</code> to the link text. For example, <code>[Some description|noembed](https://twitter.com/user/status/123)</code>";
+      }
+    );
 
     new Setting(containerEl).setName("Twitter").addToggle((toggle) => {
       toggle
@@ -111,6 +120,25 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
           .setValue(this.plugin.settings.keepLinksInPreview)
           .onChange(async (value) => {
             this.plugin.settings.keepLinksInPreview = value;
+            await this.plugin.saveSettings();
+          });
+      });
+
+    const fragment = new DocumentFragment();
+    const div = fragment.createEl("div");
+    const span = fragment.createEl("span");
+    span.innerHTML =
+      "Instead of automatically embedding all matching links, you must add <code>|embed</code> to the link text of each link you would like to turn into an embed. For example, <code>[Some description|embed](https://twitter.com/user/status/123)</code>";
+    div.appendChild(span);
+    fragment.appendChild(div);
+    new Setting(containerEl)
+      .setName("Disable automatic embeds")
+      .setDesc(fragment)
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.settings.disableAutomaticEmbeds)
+          .onChange(async (value) => {
+            this.plugin.settings.disableAutomaticEmbeds = value;
             await this.plugin.saveSettings();
           });
       });
