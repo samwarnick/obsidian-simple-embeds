@@ -3,6 +3,7 @@ export interface PluginSettings {
   replaceYouTubeLinks: boolean;
 
   keepLinksInPreview: boolean;
+  embedPlacement: "above" | "below";
   disableAutomaticEmbeds: boolean;
 }
 
@@ -11,5 +12,6 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceYouTubeLinks: true,
 
   keepLinksInPreview: false,
+  embedPlacement: "above",
   disableAutomaticEmbeds: false,
 };

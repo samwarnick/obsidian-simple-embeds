@@ -57,10 +57,15 @@ export default class SimpleEmbedsPlugin extends Plugin {
   }
 
   private _insertEmbed(a: HTMLAnchorElement, container: HTMLElement) {
-    if (this.settings.keepLinksInPreview) {
-      a.prepend(container);
+    const parent = a.parentElement;
+    const keepLinksInPreview = this.settings.keepLinksInPreview;
+    const placement = this.settings.embedPlacement;
+    if (keepLinksInPreview && placement === "above") {
+      parent.insertBefore(container, a);
+    } else if (keepLinksInPreview && placement === "below") {
+      container.insertAfter(a);
     } else {
-      a.parentElement.replaceChild(container, a);
+      parent.replaceChild(container, a);
     }
   }
 }
@@ -121,8 +126,25 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
           .onChange(async (value) => {
             this.plugin.settings.keepLinksInPreview = value;
             await this.plugin.saveSettings();
+            placement.setDisabled(!this.plugin.settings.keepLinksInPreview);
           });
       });
+
+    const placement = new Setting(containerEl)
+      .setName("Place embeds")
+      .setDesc(
+        'When "Keep links in preview" is enabled, choose whether to place the embed above or below the link.'
+      )
+      .addDropdown((dropdown) => {
+        dropdown
+          .addOptions({ above: "Above link", below: "Below link" })
+          .setValue(this.plugin.settings.embedPlacement)
+          .onChange(async (value: "above" | "below") => {
+            this.plugin.settings.embedPlacement = value;
+            await this.plugin.saveSettings();
+          });
+      })
+      .setDisabled(!this.plugin.settings.keepLinksInPreview);
 
     const fragment = new DocumentFragment();
     const div = fragment.createEl("div");
