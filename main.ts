@@ -16,7 +16,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
         "a.external-link"
       ) as NodeListOf<HTMLAnchorElement>;
       anchors.forEach((anchor) => {
-        this._parseAnchor(anchor);
+        this._handleAnchor(anchor);
       });
     });
   }
@@ -35,7 +35,22 @@ export default class SimpleEmbedsPlugin extends Plugin {
     view?.previewMode?.rerender(true);
   }
 
-  private _parseAnchor(a: HTMLAnchorElement) {
+  private _handleAnchor(a: HTMLAnchorElement) {
+    const isWithinText = Array.from(a.parentElement.childNodes)
+      .filter((node) => {
+        return node instanceof Text;
+      })
+      .some((text: Text) => {
+        const nbsp = new RegExp(String.fromCharCode(160), "g");
+        const data = text.data.replace(nbsp, "").trim();
+        return !!data;
+      });
+
+    const disableAutomaticEmbeds = this.settings.disableAutomaticEmbeds;
+    if (isWithinText && !disableAutomaticEmbeds) {
+      return;
+    }
+
     const href = a.getAttribute("href");
     const container = document.createElement("div");
     container.classList.add("embed-container");
@@ -45,7 +60,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     });
 
     if (embedSource) {
-      const replaceWithEmbed = this.settings.disableAutomaticEmbeds
+      const replaceWithEmbed = disableAutomaticEmbeds
         ? a.innerText.endsWith("|embed")
         : !a.innerText.endsWith("|noembed");
       a.innerText = a.innerText.replace("|noembed", "").replace("|embed", "");
