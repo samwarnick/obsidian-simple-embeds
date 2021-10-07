@@ -47,6 +47,10 @@ export default class SimpleEmbedsPlugin extends Plugin {
       });
 
     const disableAutomaticEmbeds = this.settings.disableAutomaticEmbeds;
+    const replaceWithEmbed = disableAutomaticEmbeds
+      ? a.innerText.endsWith("|embed")
+      : !a.innerText.endsWith("|noembed");
+    a.innerText = a.innerText.replace("|noembed", "").replace("|embed", "");
     if (isWithinText && !disableAutomaticEmbeds) {
       return;
     }
@@ -59,15 +63,9 @@ export default class SimpleEmbedsPlugin extends Plugin {
       return source.canHandle(href, this.settings);
     });
 
-    if (embedSource) {
-      const replaceWithEmbed = disableAutomaticEmbeds
-        ? a.innerText.endsWith("|embed")
-        : !a.innerText.endsWith("|noembed");
-      a.innerText = a.innerText.replace("|noembed", "").replace("|embed", "");
-      if (replaceWithEmbed) {
-        const embed = embedSource.createEmbed(href, container);
-        this._insertEmbed(a, embed);
-      }
+    if (embedSource && replaceWithEmbed) {
+      const embed = embedSource.createEmbed(href, container);
+      this._insertEmbed(a, embed);
     }
   }
 
