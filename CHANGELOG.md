@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Links will not be replaced with embeds when they are within text.
 
+### Experimental
+
+- Apple Music support
+  - Unable to log into Apple Music, so not the best experience—can only hear 30 seconds of a song. Will investigate more.
+
 ## [1.2.0] - 2021-10-03
 
 ### Added

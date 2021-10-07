@@ -1,10 +1,19 @@
-import { EmbedSource, TwitterEmbed, YouTubeEmbed } from "embeds";
+import {
+  AppleMusicEmbed,
+  EmbedSource,
+  TwitterEmbed,
+  YouTubeEmbed,
+} from "embeds";
 import { App, Plugin, Setting, PluginSettingTab, MarkdownView } from "obsidian";
 import { DEFAULT_SETTINGS, PluginSettings } from "settings";
 
 export default class SimpleEmbedsPlugin extends Plugin {
   settings: PluginSettings;
-  embedSources: EmbedSource[] = [new TwitterEmbed(), new YouTubeEmbed()];
+  embedSources: EmbedSource[] = [
+    new TwitterEmbed(),
+    new YouTubeEmbed(),
+    new AppleMusicEmbed(),
+  ];
 
   async onload() {
     console.log(`Loading ${this.manifest.name} v${this.manifest.version}`);
@@ -128,6 +137,15 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
         });
     });
 
+    new Setting(containerEl).setName("Apple Music").addToggle((toggle) => {
+      toggle
+        .setValue(this.plugin.settings.replaceAppleMusicLinks)
+        .onChange(async (value) => {
+          this.plugin.settings.replaceAppleMusicLinks = value;
+          await this.plugin.saveSettings();
+        });
+    });
+
     containerEl.createEl("h3", { text: "Advanced Settings" });
 
     new Setting(containerEl)
@@ -179,5 +197,17 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
             await this.plugin.saveSettings();
           });
       });
+
+    // containerEl.createEl("h3", { text: "Experimental Embed Sources" });
+    // containerEl.createEl(
+    //   "p",
+    //   {
+    //     cls: "setting-item-description",
+    //   },
+    //   (el) => {
+    //     el.innerText =
+    //       "These sources may not work exactly as you expect, but have some utility as-is. May be removed at any time.";
+    //   }
+    // );
   }
 }

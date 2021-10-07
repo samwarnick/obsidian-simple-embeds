@@ -5,5 +5,6 @@ export interface EmbedSource {
   createEmbed: (link: string, container: HTMLElement) => HTMLElement;
 }
 
+export * from "./apple-music";
 export * from "./twitter";
 export * from "./youtube";
