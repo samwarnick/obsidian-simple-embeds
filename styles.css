@@ -1,6 +1,13 @@
 .embed-container {
   max-width: 550px;
 }
+.embed-container.instagram iframe {
+  width: 100%;
+  max-width: 550px;
+}
+.embed-container.instagram blockquote {
+  display: none;
+}
 .video-wrapper {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */

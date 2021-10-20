@@ -1,15 +1,39 @@
-import { EmbedSource, TwitterEmbed, YouTubeEmbed } from "embeds";
-import { App, Plugin, Setting, PluginSettingTab, MarkdownView } from "obsidian";
+import {
+  EmbedSource,
+  InstagramEmbed,
+  TwitterEmbed,
+  YouTubeEmbed,
+} from "embeds";
+import {
+  App,
+  Plugin,
+  Setting,
+  PluginSettingTab,
+  MarkdownView,
+  debounce,
+  Debouncer,
+} from "obsidian";
 import { DEFAULT_SETTINGS, PluginSettings } from "settings";
 
 export default class SimpleEmbedsPlugin extends Plugin {
   settings: PluginSettings;
-  embedSources: EmbedSource[] = [new TwitterEmbed(), new YouTubeEmbed()];
+  embedSources: EmbedSource[] = [
+    new TwitterEmbed(),
+    new YouTubeEmbed(),
+    new InstagramEmbed(),
+  ];
+  processedMarkdown: Debouncer<[]>;
 
   async onload() {
     console.log(`Loading ${this.manifest.name} v${this.manifest.version}`);
     await this.loadSettings();
     this.addSettingTab(new SimpleEmbedPluginSettingTab(this.app, this));
+
+    this.processedMarkdown = debounce(() => {
+      this.embedSources.forEach((source) => {
+        source.afterAllEmbeds?.();
+      });
+    }, 100);
 
     this.registerMarkdownPostProcessor((el, ctx) => {
       const anchors = el.querySelectorAll(
@@ -18,11 +42,13 @@ export default class SimpleEmbedsPlugin extends Plugin {
       anchors.forEach((anchor) => {
         this._handleAnchor(anchor);
       });
+      this.processedMarkdown();
     });
   }
 
   onunload() {
     console.log(`Unloading ${this.manifest.name}`);
+    this.processedMarkdown = null;
   }
 
   async loadSettings() {
@@ -122,6 +148,15 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
         .setValue(this.plugin.settings.replaceYouTubeLinks)
         .onChange(async (value) => {
           this.plugin.settings.replaceYouTubeLinks = value;
+          await this.plugin.saveSettings();
+        });
+    });
+
+    new Setting(containerEl).setName("Instagram").addToggle((toggle) => {
+      toggle
+        .setValue(this.plugin.settings.replaceInstagramLinks)
+        .onChange(async (value) => {
+          this.plugin.settings.replaceInstagramLinks = value;
           await this.plugin.saveSettings();
         });
     });
