@@ -8,6 +8,17 @@
 .embed-container.instagram blockquote {
   display: none;
 }
+.embed-container:is(.flat_io, .noteflight) {
+  max-width: 750px;
+}
+.embed-container.flat_io iframe {
+  width: 100%;
+  height: 450px;
+}
+.embed-container.noteflight iframe {
+  width: 100%;
+  height: 450px;
+}
 .video-wrapper {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */

@@ -2,7 +2,7 @@ import { EmbedSource } from "./";
 import { PluginSettings } from "settings";
 
 const FLAT_IO_LINK = new RegExp(
-  /https:\/\/flat\.io\/(score|embed)\/.*/,
+  /https:\/\/flat\.io\/(?:score|embed)\/.*/,
 );
 
 export class FlatIOEmbed implements EmbedSource {
@@ -11,17 +11,13 @@ export class FlatIOEmbed implements EmbedSource {
   }
 
   createEmbed(link: string, container: HTMLElement) {
-    const wrapper = document.createElement("div");
-    wrapper.classList.add("flat_io-wrapper");
     const iframe = document.createElement("iframe");
 
     iframe.src = link.replace("/score/", "/embed/");
     iframe.setAttr("frameborder", "0");
-    iframe.width = "750";
-    iframe.height = "450";
     iframe.allow = "fullscreen";
-    wrapper.appendChild(iframe);
-    container.appendChild(wrapper);
+    container.appendChild(iframe);
+    container.classList.add("flat_io");
     return container;
   }
 }

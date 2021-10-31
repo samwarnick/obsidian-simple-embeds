@@ -2,6 +2,7 @@ import {
   EmbedSource,
   FlatIOEmbed,
   InstagramEmbed,
+  NoteflightEmbed,
   TwitterEmbed,
   YouTubeEmbed,
 } from "embeds";
@@ -22,7 +23,8 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new TwitterEmbed(),
     new YouTubeEmbed(),
     new InstagramEmbed(),
-    new FlatIOEmbed()
+    new FlatIOEmbed(),
+    new NoteflightEmbed()
   ];
   processedMarkdown: Debouncer<[]>;
 
@@ -90,6 +92,8 @@ export default class SimpleEmbedsPlugin extends Plugin {
     let embedSource = this.embedSources.find((source) => {
       return source.canHandle(href, this.settings);
     });
+    
+    console.log(href, embedSource)
 
     if (embedSource && replaceWithEmbed) {
       const embed = embedSource.createEmbed(href, container);
@@ -168,6 +172,15 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
         .setValue(this.plugin.settings.replaceFlatIOLinks)
         .onChange(async (value) => {
           this.plugin.settings.replaceFlatIOLinks = value;
+          await this.plugin.saveSettings();
+        });
+    });
+
+    new Setting(containerEl).setName("Noteflight").addToggle((toggle) => {
+      toggle
+        .setValue(this.plugin.settings.replaceNoteflightLinks)
+        .onChange(async (value) => {
+          this.plugin.settings.replaceNoteflightLinks = value;
           await this.plugin.saveSettings();
         });
     });

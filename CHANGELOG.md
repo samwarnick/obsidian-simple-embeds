@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Support for [Flat.io](https://flat.io) links.
+- Support for [Noteflight](https://www.noteflight.com) links.
 ## [1.4.0] - 2021-10-29
 
 ### Added

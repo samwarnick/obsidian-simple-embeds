@@ -3,6 +3,7 @@ export interface PluginSettings {
   replaceYouTubeLinks: boolean;
   replaceInstagramLinks: boolean;
   replaceFlatIOLinks: boolean;
+  replaceNoteflightLinks: boolean;
 
   keepLinksInPreview: boolean;
   embedPlacement: "above" | "below";
@@ -14,6 +15,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceYouTubeLinks: true,
   replaceInstagramLinks: true,
   replaceFlatIOLinks: true,
+  replaceNoteflightLinks: true,
 
   keepLinksInPreview: false,
   embedPlacement: "above",

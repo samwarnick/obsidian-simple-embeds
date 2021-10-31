@@ -10,3 +10,4 @@ export * from "./twitter";
 export * from "./youtube";
 export * from "./instagram";
 export * from "./flat_io";
+export * from "./noteflight";
