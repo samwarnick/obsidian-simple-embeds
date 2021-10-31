@@ -1,5 +1,6 @@
 import {
   EmbedSource,
+  FlatIOEmbed,
   InstagramEmbed,
   TwitterEmbed,
   YouTubeEmbed,
@@ -21,6 +22,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new TwitterEmbed(),
     new YouTubeEmbed(),
     new InstagramEmbed(),
+    new FlatIOEmbed()
   ];
   processedMarkdown: Debouncer<[]>;
 
@@ -157,6 +159,15 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
         .setValue(this.plugin.settings.replaceInstagramLinks)
         .onChange(async (value) => {
           this.plugin.settings.replaceInstagramLinks = value;
+          await this.plugin.saveSettings();
+        });
+    });
+
+    new Setting(containerEl).setName("Flat.io").addToggle((toggle) => {
+      toggle
+        .setValue(this.plugin.settings.replaceFlatIOLinks)
+        .onChange(async (value) => {
+          this.plugin.settings.replaceFlatIOLinks = value;
           await this.plugin.saveSettings();
         });
     });
