@@ -93,8 +93,6 @@ export default class SimpleEmbedsPlugin extends Plugin {
       return source.canHandle(href, this.settings);
     });
     
-    console.log(href, embedSource)
-
     if (embedSource && replaceWithEmbed) {
       const embed = embedSource.createEmbed(href, container);
       this._insertEmbed(a, embed);

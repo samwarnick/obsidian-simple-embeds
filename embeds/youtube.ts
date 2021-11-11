@@ -2,7 +2,7 @@ import { EmbedSource } from "./";
 import { PluginSettings } from "settings";
 
 const YOUTUBE_LINK = new RegExp(
-  /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/)([\w\-\_]*)(&(amp;)?‌​[\w\?‌​=]*)?/
+  /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/|be\.com\/embed\/)([\w\-\_]*)((?:\?|&)(?:t|start)=(\d+))?/
 );
 
 export class YouTubeEmbed implements EmbedSource {
@@ -15,9 +15,16 @@ export class YouTubeEmbed implements EmbedSource {
     wrapper.classList.add("video-wrapper");
     const iframe = document.createElement("iframe");
 
-    const videoId = link.match(YOUTUBE_LINK)[1];
+    const matches = link.match(YOUTUBE_LINK)
+    const videoId = matches[1];
+    const startTime = matches[3];
+    console.log(matches)
 
-    iframe.src = `https://www.youtube.com/embed/${videoId}`;
+    let src = `https://www.youtube.com/embed/${videoId}`
+    if (startTime) {
+      src = `${src}?start=${startTime}`
+    }
+    iframe.src = src;
     iframe.title = "YouTube video player";
     iframe.setAttr("frameborder", "0");
     iframe.allow =
