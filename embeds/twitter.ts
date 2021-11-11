@@ -3,11 +3,19 @@ import { PluginSettings } from "settings";
 
 const TWEET_LINK = new RegExp(/https:\/\/(?:mobile\.)?twitter\.com\/.+\/(\d+)/);
 
+interface EmbedOptions {
+  theme: "dark" | "light";
+  dnt: boolean;
+}
 interface Twitter {
   _e: (() => void)[];
   ready: (f: () => void) => void;
   widgets: {
-    createTweet: (id: string, container: HTMLElement) => Promise<HTMLElement>;
+    createTweet: (
+      id: string,
+      container: HTMLElement,
+      options?: EmbedOptions,
+    ) => Promise<HTMLElement>;
   };
 }
 declare global {
@@ -25,8 +33,13 @@ export class TwitterEmbed implements EmbedSource {
     this._ensureTwitterLoaded();
     const tweetId = link.match(TWEET_LINK)[1];
     container.id = `TweetContainer${tweetId}`;
+    const inDarkMode = document.body.classList.contains("theme-dark");
+    const theme = inDarkMode ? "dark" : "light";
     window.twttr.ready(() => {
-      window.twttr.widgets.createTweet(tweetId, container);
+      window.twttr.widgets.createTweet(tweetId, container, {
+        theme,
+        dnt: true,
+      });
     });
     return container;
   }
@@ -41,13 +54,6 @@ export class TwitterEmbed implements EmbedSource {
       js.id = id;
       js.src = "https://platform.twitter.com/widgets.js";
       fjs.parentNode.insertBefore(js, fjs);
-
-      // Add global settings for Twitter embeds
-
-      const meta = d.createElement("meta");
-      meta.name = "twitter.dnt";
-      meta.content = "on";
-      d.getElementsByTagName("head")[0].appendChild(meta);
 
       t._e = [];
       t.ready = function (f: () => void) {
