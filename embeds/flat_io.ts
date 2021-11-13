@@ -14,7 +14,7 @@ export class FlatIOEmbed implements EmbedSource {
     const iframe = document.createElement("iframe");
 
     iframe.src = link.replace("/score/", "/embed/");
-    iframe.setAttr("frameborder", "0");
+    iframe.setAttribute("frameborder", "0");
     iframe.allow = "fullscreen";
     container.appendChild(iframe);
     container.classList.add("flat_io");

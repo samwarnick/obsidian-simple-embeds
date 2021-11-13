@@ -25,10 +25,10 @@ export class YouTubeEmbed implements EmbedSource {
     }
     iframe.src = src;
     iframe.title = "YouTube video player";
-    iframe.setAttr("frameborder", "0");
+    iframe.setAttribute("frameborder", "0");
     iframe.allow =
       "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;";
-    iframe.setAttr(
+    iframe.setAttribute(
       "sandbox",
       "allow-scripts allow-same-origin allow-presentation allow-popups"
     );

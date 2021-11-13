@@ -15,7 +15,7 @@ export class NoteflightEmbed implements EmbedSource {
     const iframe = document.createElement("iframe");
 
     iframe.src = link.replace("/scores/view/", "/embed/");
-    iframe.setAttr("frameborder", "0");
+    iframe.setAttribute("frameborder", "0");
     iframe.allow = "fullscreen";
     container.appendChild(iframe);
     container.classList.add("noteflight");
