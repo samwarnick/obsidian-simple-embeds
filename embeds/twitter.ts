@@ -1,5 +1,6 @@
 import { EmbedSource } from "./";
 import { PluginSettings } from "settings";
+import SimpleEmbedsPlugin from "main";
 
 const TWEET_LINK = new RegExp(/https:\/\/(?:mobile\.)?twitter\.com\/.+\/(\d+)/);
 
@@ -25,6 +26,8 @@ declare global {
 }
 
 export class TwitterEmbed implements EmbedSource {
+  constructor(private plugin: SimpleEmbedsPlugin) {}
+
   canHandle(link: string, settings: PluginSettings) {
     return settings.replaceTwitterLinks && TWEET_LINK.test(link);
   }
@@ -33,8 +36,9 @@ export class TwitterEmbed implements EmbedSource {
     this._ensureTwitterLoaded();
     const tweetId = link.match(TWEET_LINK)[1];
     container.id = `TweetContainer${tweetId}`;
-    const inDarkMode = document.body.classList.contains("theme-dark");
-    const theme = inDarkMode ? "dark" : "light";
+    const theme = this.plugin.settings.twitterTheme == "auto"
+      ? this.plugin.currentTheme
+      : this.plugin.settings.twitterTheme;
     window.twttr.ready(() => {
       window.twttr.widgets.createTweet(tweetId, container, {
         theme,
@@ -42,6 +46,24 @@ export class TwitterEmbed implements EmbedSource {
       });
     });
     return container;
+  }
+
+  updateTheme(theme: "dark" | "light") {
+    if (this.plugin.settings.twitterTheme !== "auto") {
+      return;
+    }
+    const twitterEmbeds = document.querySelectorAll(
+      ".embed-container .twitter-tweet.twitter-tweet-rendered iframe",
+    ) as NodeListOf<HTMLIFrameElement>;
+    twitterEmbeds.forEach((embed) => {
+      let src = embed.src;
+      if (theme === "dark") {
+        src = src.replace("theme=light", "theme=dark");
+      } else {
+        src = src.replace("theme=dark", "theme=light");
+      }
+      embed.src = src;
+    });
   }
 
   private _ensureTwitterLoaded() {

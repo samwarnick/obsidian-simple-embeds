@@ -5,6 +5,8 @@ export interface PluginSettings {
   replaceFlatIOLinks: boolean;
   replaceNoteflightLinks: boolean;
 
+  twitterTheme: "auto" | "dark" | "light";
+
   keepLinksInPreview: boolean;
   embedPlacement: "above" | "below";
   disableAutomaticEmbeds: boolean;
@@ -16,6 +18,8 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceInstagramLinks: true,
   replaceFlatIOLinks: true,
   replaceNoteflightLinks: true,
+
+  twitterTheme: "auto",
 
   keepLinksInPreview: false,
   embedPlacement: "above",

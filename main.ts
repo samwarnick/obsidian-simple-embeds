@@ -8,30 +8,33 @@ import {
 } from "embeds";
 import {
   App,
-  Plugin,
-  Setting,
-  PluginSettingTab,
-  MarkdownView,
   debounce,
   Debouncer,
+  MarkdownView,
+  Plugin,
+  PluginSettingTab,
+  Setting,
 } from "obsidian";
 import { DEFAULT_SETTINGS, PluginSettings } from "settings";
 
 export default class SimpleEmbedsPlugin extends Plugin {
   settings: PluginSettings;
   embedSources: EmbedSource[] = [
-    new TwitterEmbed(),
+    new TwitterEmbed(this),
     new YouTubeEmbed(),
     new InstagramEmbed(),
     new FlatIOEmbed(),
-    new NoteflightEmbed()
+    new NoteflightEmbed(),
   ];
   processedMarkdown: Debouncer<[]>;
+  currentTheme: "dark" | "light";
 
   async onload() {
     console.log(`Loading ${this.manifest.name} v${this.manifest.version}`);
     await this.loadSettings();
     this.addSettingTab(new SimpleEmbedPluginSettingTab(this.app, this));
+
+    this.currentTheme = this._getCurrentTheme();
 
     this.processedMarkdown = debounce(() => {
       this.embedSources.forEach((source) => {
@@ -41,13 +44,26 @@ export default class SimpleEmbedsPlugin extends Plugin {
 
     this.registerMarkdownPostProcessor((el, ctx) => {
       const anchors = el.querySelectorAll(
-        "a.external-link"
+        "a.external-link",
       ) as NodeListOf<HTMLAnchorElement>;
       anchors.forEach((anchor) => {
         this._handleAnchor(anchor);
       });
       this.processedMarkdown();
     });
+
+    this.registerEvent(this.app.workspace.on("css-change", () => {
+      // Theme has potentially changed.
+      const previousTheme = this.currentTheme;
+      this.currentTheme = this._getCurrentTheme();
+      if (
+        previousTheme !== this.currentTheme
+      ) {
+        (this.embedSources[0] as TwitterEmbed).updateTheme(
+          this.currentTheme,
+        );
+      }
+    }));
   }
 
   onunload() {
@@ -63,6 +79,10 @@ export default class SimpleEmbedsPlugin extends Plugin {
     await this.saveData(this.settings);
     const view = this.app.workspace.getActiveViewOfType(MarkdownView);
     view?.previewMode?.rerender(true);
+  }
+
+  private _getCurrentTheme(): "dark" | "light" {
+    return document.body.classList.contains("theme-dark") ? "dark" : "light";
   }
 
   private _handleAnchor(a: HTMLAnchorElement) {
@@ -92,7 +112,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     let embedSource = this.embedSources.find((source) => {
       return source.canHandle(href, this.settings);
     });
-    
+
     if (embedSource && replaceWithEmbed) {
       const embed = embedSource.createEmbed(href, container);
       this._insertEmbed(a, embed);
@@ -135,7 +155,7 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
       (el) => {
         el.innerHTML =
           "Disable to prevent <em>all</em> links from source ever being turned into embeds. To disable an individual link, add <code>|noembed</code> to the link text. For example, <code>[Some description|noembed](https://twitter.com/user/status/123)</code>";
-      }
+      },
     );
 
     new Setting(containerEl).setName("Twitter").addToggle((toggle) => {
@@ -144,6 +164,7 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
         .onChange(async (value) => {
           this.plugin.settings.replaceTwitterLinks = value;
           await this.plugin.saveSettings();
+          twitterTheme.setDisabled(!this.plugin.settings.replaceTwitterLinks);
         });
     });
 
@@ -183,12 +204,26 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
         });
     });
 
+    containerEl.createEl("h3", { text: "Appearance" });
+
+    const twitterTheme = new Setting(containerEl)
+      .setName("Twitter theme")
+      .addDropdown((dropdown) => {
+        dropdown.addOptions({ auto: "Automatic", dark: "Dark", light: "Light" })
+          .setValue(this.plugin.settings.twitterTheme)
+          .onChange(async (value: "auto" | "dark" | "light") => {
+            this.plugin.settings.twitterTheme = value;
+            await this.plugin.saveSettings();
+          });
+      })
+      .setDisabled(!this.plugin.settings.replaceTwitterLinks);
+
     containerEl.createEl("h3", { text: "Advanced Settings" });
 
     new Setting(containerEl)
       .setName("Keep links in preview")
       .setDesc(
-        "Insert embeds above the link, instead of replacing the link in the preview."
+        "Insert embeds above the link, instead of replacing the link in the preview.",
       )
       .addToggle((toggle) => {
         toggle
@@ -203,7 +238,7 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
     const placement = new Setting(containerEl)
       .setName("Place embeds")
       .setDesc(
-        'When "Keep links in preview" is enabled, choose whether to place the embed above or below the link.'
+        'When "Keep links in preview" is enabled, choose whether to place the embed above or below the link.',
       )
       .addDropdown((dropdown) => {
         dropdown
