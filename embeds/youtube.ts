@@ -2,7 +2,7 @@ import { EmbedSource } from "./";
 import { PluginSettings } from "settings";
 
 const YOUTUBE_LINK = new RegExp(
-  /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/|be\.com\/embed\/)([\w\-\_]*)((?:\?|&)(?:t|start)=(\d+))?/
+  /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/|be\.com\/embed\/)(?<id>[\w\-\_]*)((?:\?|&)(?:t|start)=(?<startTime>(?:\d+h)?(?:\d+m)?\d+s|\d+))?/,
 );
 
 export class YouTubeEmbed implements EmbedSource {
@@ -15,13 +15,13 @@ export class YouTubeEmbed implements EmbedSource {
     wrapper.classList.add("video-wrapper");
     const iframe = document.createElement("iframe");
 
-    const matches = link.match(YOUTUBE_LINK)
-    const videoId = matches[1];
-    const startTime = matches[3];
+    const matches = link.match(YOUTUBE_LINK);
+    const videoId = matches.groups.id;
+    const startTime = this._normalizeStartTime(matches.groups.startTime);
 
-    let src = `https://www.youtube.com/embed/${videoId}`
+    let src = `https://www.youtube.com/embed/${videoId}`;
     if (startTime) {
-      src = `${src}?start=${startTime}`
+      src = `${src}?start=${startTime}`;
     }
     iframe.src = src;
     iframe.title = "YouTube video player";
@@ -30,10 +30,26 @@ export class YouTubeEmbed implements EmbedSource {
       "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture;";
     iframe.setAttribute(
       "sandbox",
-      "allow-scripts allow-same-origin allow-presentation allow-popups"
+      "allow-scripts allow-same-origin allow-presentation allow-popups",
     );
     wrapper.appendChild(iframe);
     container.appendChild(wrapper);
     return container;
+  }
+
+  private _normalizeStartTime(startTime: string) {
+    if (!startTime) {
+      return;
+    }
+    if (!isNaN(Number(startTime))) {
+      return startTime;
+    }
+    const matches = startTime.match(
+      /(?<hours>\d+h)?(?<minutes>\d+m)?(?<seconds>\d+s)/,
+    );
+    const hoursInSeconds = parseInt(matches.groups.hours ?? "0") * 60 * 60;
+    const minutesInSeconds = parseInt(matches.groups.minutes ?? "0") * 60;
+    const seconds = parseInt(matches.groups.seconds ?? "0");
+    return `${hoursInSeconds + minutesInSeconds + seconds}`;
   }
 }
