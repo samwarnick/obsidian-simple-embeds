@@ -18,7 +18,6 @@ export class YouTubeEmbed implements EmbedSource {
     const matches = link.match(YOUTUBE_LINK)
     const videoId = matches[1];
     const startTime = matches[3];
-    console.log(matches)
 
     let src = `https://www.youtube.com/embed/${videoId}`
     if (startTime) {
