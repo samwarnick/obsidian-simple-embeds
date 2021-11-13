@@ -19,6 +19,11 @@ test.each([
   },
   {
     link: "https://www.youtube.com/watch?v=xxxxxxxxxxx",
+    settings: { replaceYouTubeLinks: false },
+    expected: false,
+  },
+  {
+    link: "https://www.youtube.com/watch?v=xxxxxxxxxxx",
     settings: { replaceYouTubeLinks: true },
     expected: true,
   },
