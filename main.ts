@@ -100,6 +100,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     const replaceWithEmbed = disableAutomaticEmbeds
       ? a.innerText.endsWith("|embed")
       : !a.innerText.endsWith("|noembed");
+    a.innerHTML = a.innerHTML.replace("|noembed", "").replace("|embed", "");
     if (isWithinText && !disableAutomaticEmbeds) {
       return;
     }
@@ -113,7 +114,6 @@ export default class SimpleEmbedsPlugin extends Plugin {
     });
 
     if (embedSource && replaceWithEmbed) {
-      a.innerHTML = a.innerHTML.replace("|noembed", "").replace("|embed", "");
       const embed = embedSource.createEmbed(href, container);
       this._insertEmbed(a, embed);
     }
