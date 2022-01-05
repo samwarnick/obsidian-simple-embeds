@@ -2,7 +2,7 @@ import { EmbedSource } from "./";
 import { PluginSettings } from "settings";
 
 const INSTAGRAM_LINK = new RegExp(
-  /https:\/\/www\.instagram\.com\/p\/(\w+)/
+  /https:\/\/www\.instagram\.com\/(?:p|tv|reel)\/(\w+)/
 );
 
 interface Instagram {
