@@ -1,6 +1,6 @@
 {
   "name": "simple-embeds",
-  "version": "1.6.3",
+  "version": "1.7.0",
   "description": "Searches for Twitter and YouTube links and replaces them with embeds when previewed.",
   "main": "main.js",
   "scripts": {
