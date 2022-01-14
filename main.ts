@@ -5,6 +5,7 @@ import {
   NoteflightEmbed,
   TwitterEmbed,
   YouTubeEmbed,
+  CodepenEmbed,
 } from "embeds";
 import {
   App,
@@ -25,6 +26,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new InstagramEmbed(),
     new FlatIOEmbed(),
     new NoteflightEmbed(),
+    new CodepenEmbed(this),
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
@@ -60,6 +62,9 @@ export default class SimpleEmbedsPlugin extends Plugin {
         previousTheme !== this.currentTheme
       ) {
         (this.embedSources[0] as TwitterEmbed).updateTheme(
+          this.currentTheme,
+        );
+        (this.embedSources[0] as CodepenEmbed).updateTheme(
           this.currentTheme,
         );
       }
@@ -204,10 +209,26 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
         });
     });
 
+    new Setting(containerEl).setName("Codepen").addToggle((toggle) => {
+      toggle
+        .setValue(this.plugin.settings.replaceCodepenLinks)
+        .onChange(async (value) => {
+          this.plugin.settings.replaceCodepenLinks = value;
+          await this.plugin.saveSettings();
+          codepenTheme.setDisabled(!this.plugin.settings.replaceCodepenLinks);
+          codepenDefaultTab.setDisabled(!this.plugin.settings.replaceCodepenLinks);
+          codepenShowResult.setDisabled(!this.plugin.settings.replaceCodepenLinks);
+          codepenClickToLoad.setDisabled(!this.plugin.settings.replaceCodepenLinks);
+          codepenEditable.setDisabled(!this.plugin.settings.replaceCodepenLinks);
+        });
+    });
+
     containerEl.createEl("h3", { text: "Appearance" });
 
+    containerEl.createEl("h4", { text: "Twitter" });
+
     const twitterTheme = new Setting(containerEl)
-      .setName("Twitter theme")
+      .setName("Theme")
       .addDropdown((dropdown) => {
         dropdown.addOptions({ auto: "Automatic", dark: "Dark", light: "Light" })
           .setValue(this.plugin.settings.twitterTheme)
@@ -217,6 +238,68 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
           });
       })
       .setDisabled(!this.plugin.settings.replaceTwitterLinks);
+
+    containerEl.createEl("h4", { text: "Codepen" });
+
+    const codepenTheme = new Setting(containerEl)
+      .setName("Theme")
+      .addDropdown((dropdown) => {
+        dropdown.addOptions({ auto: "Automatic", dark: "Dark", light: "Light" })
+          .setValue(this.plugin.settings.codepenTheme)
+          .onChange(async (value: "auto" | "dark" | "light") => {
+            this.plugin.settings.codepenTheme = value;
+            await this.plugin.saveSettings();
+          });
+      })
+      .setDisabled(!this.plugin.settings.replaceCodepenLinks);
+
+    const codepenDefaultTab = new Setting(containerEl)
+      .setName("Default tab")
+      .addDropdown((dropdown) => {
+        dropdown.addOptions({ html: "HTML", css: "CSS", js: "JS" })
+          .setValue(this.plugin.settings.codepenDefaultTab)
+          .onChange(async (value: "html" | "css" | "js") => {
+            this.plugin.settings.codepenDefaultTab = value;
+            await this.plugin.saveSettings();
+          });
+      })
+      .setDisabled(!this.plugin.settings.replaceCodepenLinks);
+
+    const codepenShowResult = new Setting(containerEl)
+      .setName("Show result")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.settings.codepenShowResult)
+          .onChange(async (value) => {
+            this.plugin.settings.codepenShowResult = value;
+            await this.plugin.saveSettings();
+          });
+      })
+      .setDisabled(!this.plugin.settings.replaceCodepenLinks);
+
+    const codepenClickToLoad = new Setting(containerEl)
+      .setName("Click to load")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.settings.codepenClickToLoad)
+          .onChange(async (value) => {
+            this.plugin.settings.codepenClickToLoad = value;
+            await this.plugin.saveSettings();
+          });
+      })
+      .setDisabled(!this.plugin.settings.replaceCodepenLinks);
+
+    const codepenEditable = new Setting(containerEl)
+      .setName("Codepen editable")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.settings.codepenEditable)
+          .onChange(async (value) => {
+            this.plugin.settings.codepenEditable = value;
+            await this.plugin.saveSettings();
+          });
+      })
+      .setDisabled(!this.plugin.settings.replaceCodepenLinks);
 
     containerEl.createEl("h3", { text: "Advanced Settings" });
 
