@@ -5,11 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [1.8.0]
+
+### Added
+
+- Add support for CodePen embeds
+- Add support for GitHub gists
 # [1.7.0]
 
 ### Added
 
-- Add support for instagram tv and instagram reels
+- Add support for Instagram tv and instagram reels
 
 # [1.6.3]
 
@@ -86,7 +92,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release 🎉
 
-[Unreleased]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.7.0...HEAD
+[Unreleased]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.8.0...HEAD
+[1.8.0]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.7.0...1.8.0
 [1.7.0]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.6.3...1.7.0
 [1.6.3]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.6.2...1.6.3
 [1.6.2]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.6.1...1.6.2
