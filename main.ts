@@ -64,7 +64,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
         (this.embedSources[0] as TwitterEmbed).updateTheme(
           this.currentTheme,
         );
-        (this.embedSources[0] as CodepenEmbed).updateTheme(
+        (this.embedSources[5] as CodepenEmbed).updateTheme(
           this.currentTheme,
         );
       }
