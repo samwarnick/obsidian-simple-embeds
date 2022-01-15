@@ -1,10 +1,11 @@
 export interface PluginSettings {
+  replaceCodepenLinks: boolean;
+  replaceFlatIOLinks: boolean;
+  replaceGitHubGistLinks: boolean;
+  replaceInstagramLinks: boolean;
+  replaceNoteflightLinks: boolean;
   replaceTwitterLinks: boolean;
   replaceYouTubeLinks: boolean;
-  replaceInstagramLinks: boolean;
-  replaceFlatIOLinks: boolean;
-  replaceNoteflightLinks: boolean;
-  replaceCodepenLinks: boolean;
 
   twitterTheme: "auto" | "dark" | "light";
 
@@ -20,12 +21,13 @@ export interface PluginSettings {
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
+  replaceCodepenLinks: true,
+  replaceFlatIOLinks: true,
+  replaceGitHubGistLinks: true,
+  replaceInstagramLinks: true,
+  replaceNoteflightLinks: true,
   replaceTwitterLinks: true,
   replaceYouTubeLinks: true,
-  replaceInstagramLinks: true,
-  replaceFlatIOLinks: true,
-  replaceNoteflightLinks: true,
-  replaceCodepenLinks: true,
 
   twitterTheme: "auto",
 

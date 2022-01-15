@@ -1,6 +1,7 @@
 import {
   EmbedSource,
   FlatIOEmbed,
+  GitHubGistEmbed,
   InstagramEmbed,
   NoteflightEmbed,
   TwitterEmbed,
@@ -27,6 +28,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new FlatIOEmbed(),
     new NoteflightEmbed(),
     new CodepenEmbed(this),
+    new GitHubGistEmbed()
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
@@ -187,6 +189,15 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
         .setValue(this.plugin.settings.replaceInstagramLinks)
         .onChange(async (value) => {
           this.plugin.settings.replaceInstagramLinks = value;
+          await this.plugin.saveSettings();
+        });
+    });
+
+    new Setting(containerEl).setName("GitHub Gists").addToggle((toggle) => {
+      toggle
+        .setValue(this.plugin.settings.replaceGitHubGistLinks)
+        .onChange(async (value) => {
+          this.plugin.settings.replaceGitHubGistLinks = value;
           await this.plugin.saveSettings();
         });
     });

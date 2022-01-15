@@ -6,9 +6,10 @@ export interface EmbedSource {
   afterAllEmbeds?: () => void;
 }
 
+export * from "./codepen";
+export * from "./flat_io";
+export * from "./github_gist";
+export * from "./instagram";
+export * from "./noteflight";
 export * from "./twitter";
 export * from "./youtube";
-export * from "./instagram";
-export * from "./flat_io";
-export * from "./noteflight";
-export * from "./codepen";
