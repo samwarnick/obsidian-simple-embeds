@@ -4,8 +4,15 @@ export interface PluginSettings {
   replaceInstagramLinks: boolean;
   replaceFlatIOLinks: boolean;
   replaceNoteflightLinks: boolean;
+  replaceCodepenLinks: boolean;
 
   twitterTheme: "auto" | "dark" | "light";
+
+  codepenTheme: "auto" | "dark" | "light";
+  codepenDefaultTab: "html" | "css" | "js";
+  codepenShowResult: boolean;
+  codepenClickToLoad: boolean;
+  codepenEditable: boolean;
 
   keepLinksInPreview: boolean;
   embedPlacement: "above" | "below";
@@ -18,8 +25,15 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceInstagramLinks: true,
   replaceFlatIOLinks: true,
   replaceNoteflightLinks: true,
+  replaceCodepenLinks: true,
 
   twitterTheme: "auto",
+
+  codepenTheme: "auto",
+  codepenDefaultTab: "html",
+  codepenShowResult: true,
+  codepenClickToLoad: false,
+  codepenEditable: false,
 
   keepLinksInPreview: false,
   embedPlacement: "above",
