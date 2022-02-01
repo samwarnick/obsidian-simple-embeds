@@ -45,6 +45,7 @@ export class TwitterEmbed implements EmbedSource {
         dnt: true,
       });
     });
+    container.classList.add("twitter");
     return container;
   }
 

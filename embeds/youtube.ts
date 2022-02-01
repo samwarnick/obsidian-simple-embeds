@@ -34,6 +34,7 @@ export class YouTubeEmbed implements EmbedSource {
     );
     wrapper.appendChild(iframe);
     container.appendChild(wrapper);
+    container.classList.add("youtube");
     return container;
   }
 

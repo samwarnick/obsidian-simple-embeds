@@ -43,6 +43,7 @@ export class CodepenEmbed implements EmbedSource {
       container.dataset["editable"] = "true";
     }
 
+    container.classList.add("codepen");
     return container;
   }
 
