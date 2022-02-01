@@ -15,6 +15,7 @@ export interface PluginSettings {
   codepenClickToLoad: boolean;
   codepenEditable: boolean;
 
+  centerEmbeds: boolean;
   keepLinksInPreview: boolean;
   embedPlacement: "above" | "below";
   disableAutomaticEmbeds: boolean;
@@ -37,6 +38,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   codepenClickToLoad: false,
   codepenEditable: false,
 
+  centerEmbeds: false,
   keepLinksInPreview: false,
   embedPlacement: "above",
   disableAutomaticEmbeds: false,

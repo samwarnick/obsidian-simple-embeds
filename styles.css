@@ -1,9 +1,14 @@
 .embed-container {
   max-width: 550px; /* This is the max width of Twitter embeds */
 }
+.embed-container.center {
+  margin: 0 auto;
+}
 .embed-container.full-width {
   max-width: 100%;
 }
+
+/* Instagram */
 .embed-container.instagram iframe {
   width: 100%;
   max-width: 550px;
@@ -11,6 +16,8 @@
 .embed-container.instagram blockquote {
   display: none;
 }
+
+/* Noteflight and Flat.io */
 .embed-container:is(.flat_io, .noteflight) {
   max-width: 750px;
 }
@@ -22,12 +29,16 @@
   width: 100%;
   height: 450px;
 }
+
+/* GitHub Gists */
 .embed-container.github_gist {
   max-width: 100%;
 }
 .embed-container.github_gist iframe {
   width: 100%;
 }
+
+/* YouTube */
 .video-wrapper {
   position: relative;
   padding-bottom: 56.25%; /* 16:9 */

@@ -126,7 +126,10 @@ export default class SimpleEmbedsPlugin extends Plugin {
     if (embedSource && replaceWithEmbed) {
       const embed = embedSource.createEmbed(href, container);
       if (fullWidth) {
-        embed.classList.add("full-width")
+        embed.classList.add("full-width");
+      }
+      if (this.settings.centerEmbeds) {
+        embed.classList.add("center");
       }
       this._insertEmbed(a, embed);
     }
@@ -319,6 +322,15 @@ class SimpleEmbedPluginSettingTab extends PluginSettingTab {
       .setDisabled(!this.plugin.settings.replaceCodepenLinks);
 
     containerEl.createEl("h3", { text: "Advanced Settings" });
+
+    new Setting(containerEl).setName("Center embeds").addToggle((toggle) => {
+      toggle
+        .setValue(this.plugin.settings.centerEmbeds)
+        .onChange(async (value) => {
+          this.plugin.settings.centerEmbeds = value;
+          await this.plugin.saveSettings();
+        });
+    }); 
 
     new Setting(containerEl)
       .setName("Keep links in preview")
