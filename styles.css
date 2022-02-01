@@ -1,5 +1,8 @@
 .embed-container {
-  max-width: 550px;
+  max-width: 550px; /* This is the max width of Twitter embeds */
+}
+.embed-container.full-width {
+  max-width: 100%;
 }
 .embed-container.instagram iframe {
   width: 100%;

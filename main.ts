@@ -105,9 +105,12 @@ export default class SimpleEmbedsPlugin extends Plugin {
 
     const disableAutomaticEmbeds = this.settings.disableAutomaticEmbeds;
     const replaceWithEmbed = disableAutomaticEmbeds
-      ? a.innerText.endsWith("|embed")
-      : !a.innerText.endsWith("|noembed");
-    a.innerHTML = a.innerHTML.replace("|noembed", "").replace("|embed", "");
+      ? a.innerText.includes("|embed")
+      : !a.innerText.includes("|noembed");
+    const fullWidth = a.innerText.includes("|fullwidth");
+    // Remove any allowed properties:
+    // |embed, |noembed, |fullwidth
+    a.innerHTML = a.innerHTML.replace(/\|(?:embed|noembed|fullwidth)/g, "");
     if (isWithinText && !disableAutomaticEmbeds) {
       return;
     }
@@ -122,6 +125,9 @@ export default class SimpleEmbedsPlugin extends Plugin {
 
     if (embedSource && replaceWithEmbed) {
       const embed = embedSource.createEmbed(href, container);
+      if (fullWidth) {
+        embed.classList.add("full-width")
+      }
       this._insertEmbed(a, embed);
     }
   }
