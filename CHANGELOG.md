@@ -12,6 +12,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Make embed full width by add `|fullwidth` to link description.
   - For example, `[Useful description|fullwidth](https://youtube.com/watch?v=acdefghijk)`
 - Add option to center embeds.
+- Add support for Apple Podcasts links.
+- Add partial support for Apple TV links.
+  - For some reason, playback fails. Clicking play will open Apple TV instead.
 
 # [1.8.0]
 
