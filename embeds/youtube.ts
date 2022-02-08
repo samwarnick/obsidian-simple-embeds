@@ -1,14 +1,13 @@
-import { EmbedSource } from "./";
-import { PluginSettings } from "settings";
+import { EmbedSource, EnableEmbedKey } from "./";
 
 const YOUTUBE_LINK = new RegExp(
   /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/|be\.com\/embed\/)(?<id>[\w\-\_]*)((?:\?|&)(?:t|start)=(?<startTime>(?:\d+h)?(?:\d+m)?\d+s|\d+))?/,
 );
 
 export class YouTubeEmbed implements EmbedSource {
-  canHandle(link: string, settings: PluginSettings) {
-    return settings.replaceYouTubeLinks && YOUTUBE_LINK.test(link);
-  }
+  name = "YouTube";
+  enabledKey: EnableEmbedKey = "replaceYouTubeLinks";
+  regex = YOUTUBE_LINK;
 
   createEmbed(link: string, container: HTMLElement) {
     const wrapper = document.createElement("div");

@@ -1,8 +1,7 @@
-import { EmbedSource } from "./";
-import { PluginSettings } from "settings";
+import { EmbedSource, EnableEmbedKey } from "./";
 
 const INSTAGRAM_LINK = new RegExp(
-  /https:\/\/www\.instagram\.com\/(?:p|tv|reel)\/(\w+)/
+  /https:\/\/www\.instagram\.com\/(?:p|tv|reel)\/(\w+)/,
 );
 
 interface Instagram {
@@ -17,9 +16,9 @@ declare global {
 }
 
 export class InstagramEmbed implements EmbedSource {
-  canHandle(link: string, settings: PluginSettings) {
-    return settings.replaceInstagramLinks && INSTAGRAM_LINK.test(link);
-  }
+  name = "Instagram";
+  enabledKey: EnableEmbedKey = "replaceInstagramLinks";
+  regex = INSTAGRAM_LINK;
 
   createEmbed(link: string, container: HTMLElement) {
     this._ensureInstagramLoaded();

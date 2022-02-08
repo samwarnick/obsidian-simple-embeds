@@ -1,14 +1,13 @@
-import { EmbedSource } from "./";
-import { PluginSettings } from "settings";
+import { EmbedSource, EnableEmbedKey } from "./";
 
 const FLAT_IO_LINK = new RegExp(
   /https:\/\/flat\.io\/(?:score|embed)\/.*/,
 );
 
 export class FlatIOEmbed implements EmbedSource {
-  canHandle(link: string, settings: PluginSettings) {
-    return settings.replaceFlatIOLinks && FLAT_IO_LINK.test(link);
-  }
+  name = "Flat.io";
+  enabledKey: EnableEmbedKey = "replaceFlatIOLinks";
+  regex = FLAT_IO_LINK;
 
   createEmbed(link: string, container: HTMLElement) {
     const iframe = document.createElement("iframe");

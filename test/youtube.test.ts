@@ -9,63 +9,52 @@ beforeEach(() => {
 test.each([
   {
     link: "https://twitter.com/test/status/1111111111111111111",
-    settings: { replaceYouTubeLinks: false },
     expected: false,
   },
   {
     link: "https://twitter.com/test/status/1111111111111111111",
-    settings: { replaceYouTubeLinks: true },
     expected: false,
   },
   {
     link: "https://www.youtube.com/watch?v=xxxxxxxxxxx",
-    settings: { replaceYouTubeLinks: false },
     expected: false,
   },
   {
     link: "https://www.youtube.com/watch?v=xxxxxxxxxxx",
-    settings: { replaceYouTubeLinks: true },
     expected: true,
   },
   {
     link: "https://www.youtube.com/watch?v=xxxxxxxxxxx&t=42s",
-    settings: { replaceYouTubeLinks: true },
     expected: true,
   },
   {
     link: "https://www.youtube.com/watch?v=xxxxxxxxxxx&t=1h42m42s",
-    settings: { replaceYouTubeLinks: true },
     expected: true,
   },
   {
     link: "https://www.youtube.com/watch?v=xxxxxxxxxxx&t=1h42s",
-    settings: { replaceYouTubeLinks: true },
     expected: true,
   },
   {
     link: "https://youtu.be/xxxxxxxxxxx",
-    settings: { replaceYouTubeLinks: true },
     expected: true,
   },
   {
     link: "https://youtu.be/xxxxxxxxxxx?t=42",
-    settings: { replaceYouTubeLinks: true },
     expected: true,
   },
   {
     link: "https://www.youtube.com/embed/xxxxxxxxxxx",
-    settings: { replaceYouTubeLinks: true },
     expected: true,
   },
   {
     link: "https://www.youtube.com/embed/xxxxxxxxxxx?start=3642",
-    settings: { replaceYouTubeLinks: true },
     expected: true,
   },
 ])(
   "canHandle returns $expected when link is $link and replaceYouTubeLinks is $settings.replaceYouTubeLinks",
-  ({ link, settings, expected }) => {
-    expect(youtube.canHandle(link, settings as any)).toBe(expected);
+  ({ link, expected }) => {
+    expect(youtube.regex.test).toBe(expected);
   },
 );
 

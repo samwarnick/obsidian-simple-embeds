@@ -1,17 +1,16 @@
-import { EmbedSource } from "./";
-import { PluginSettings } from "settings";
+import { EmbedSource, EnableEmbedKey } from "./";
 
 const NOTEFLIGHT_LINK = new RegExp(
-    /https:\/\/(?:www\.)?noteflight\.com\/(?:(?:scores\/view)|embed)\/.*/g,
+  /https:\/\/(?:www\.)?noteflight\.com\/(?:(?:scores\/view)|embed)\/.*/g,
 );
 
 export class NoteflightEmbed implements EmbedSource {
-  canHandle(link: string, settings: PluginSettings) {
-    return settings.replaceNoteflightLinks && NOTEFLIGHT_LINK.test(link);
-  }
+  name = "Noteflight";
+  enabledKey: EnableEmbedKey = "replaceNoteflightLinks";
+  regex = NOTEFLIGHT_LINK;
 
   createEmbed(link: string, container: HTMLElement) {
-      console.log("creating embed for", link)
+    console.log("creating embed for", link);
     const iframe = document.createElement("iframe");
 
     iframe.src = link.replace("/scores/view/", "/embed/");

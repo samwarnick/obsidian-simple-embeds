@@ -1,6 +1,6 @@
-import { EmbedSource } from "./";
+import { EmbedSource, EnableEmbedKey } from "./";
+import { Setting } from "obsidian";
 import { PluginSettings } from "settings";
-import SimpleEmbedsPlugin from "main";
 
 const CODEPEN_LINK = new RegExp(/https:\/\/codepen\.io\/(\w+)\/(?:pen)\/(\w+)/);
 
@@ -11,35 +11,37 @@ declare global {
 }
 
 export class CodepenEmbed implements EmbedSource {
-  constructor(private plugin: SimpleEmbedsPlugin) {}
+  name = "CodePen";
+  enabledKey: EnableEmbedKey = "replaceCodepenLinks";
+  regex = CODEPEN_LINK;
 
-  canHandle(link: string, settings: PluginSettings) {
-    return settings.replaceCodepenLinks && CODEPEN_LINK.test(link);
-  }
-
-  createEmbed(link: string, container: HTMLElement) {
+  createEmbed(
+    link: string,
+    container: HTMLElement,
+    settings: Readonly<PluginSettings>,
+  ) {
     this._ensureCodepenLoaded();
 
     const user = link.match(CODEPEN_LINK)[1];
     const slug = link.match(CODEPEN_LINK)[2];
 
     const defaultTabs = [
-      this.plugin.settings.codepenDefaultTab,
-      this.plugin.settings.codepenShowResult ? "result" : false,
+      settings.codepenDefaultTab,
+      settings.codepenShowResult ? "result" : false,
     ].filter(Boolean);
 
     container.classList.add("codepen");
-    container.dataset["themeId"] = this.plugin.settings.codepenTheme;
+    container.dataset["themeId"] = settings.codepenTheme;
     container.dataset["height"] = "300";
     container.dataset["defaultTab"] = defaultTabs.join(",");
     container.dataset["user"] = user;
     container.dataset["slugHash"] = slug;
 
-    if (this.plugin.settings.codepenClickToLoad) {
+    if (settings.codepenClickToLoad) {
       container.dataset["preview"] = "true";
     }
 
-    if (this.plugin.settings.codepenEditable) {
+    if (settings.codepenEditable) {
       container.dataset["editable"] = "true";
     }
 
@@ -49,12 +51,12 @@ export class CodepenEmbed implements EmbedSource {
 
   afterAllEmbeds() {
     setTimeout(() => {
-      window.__CPEmbed(".codepen");
+      window.__CPEmbed?.(".codepen");
     });
   }
 
-  updateTheme(theme: "dark" | "light") {
-    if (this.plugin.settings.codepenTheme !== "auto") return;
+  updateTheme(theme: "dark" | "light", settings: Readonly<PluginSettings>) {
+    if (settings.codepenTheme !== "auto") return;
 
     const codepenEmbeds = document.querySelectorAll(
       ".cp_embed_wrapper iframe",
@@ -84,5 +86,73 @@ export class CodepenEmbed implements EmbedSource {
       js.async = true;
       fjs.parentNode.insertBefore(js, fjs);
     })(document, "script", "ei-codepen");
+  }
+
+  createAdditionalSettings(
+    containerEl: HTMLElement,
+    settings: Readonly<PluginSettings>,
+    saveSettings: (updates: Partial<PluginSettings>) => Promise<void>,
+  ) {
+    const themeSetting = new Setting(containerEl)
+      .setName("Theme")
+      .addDropdown((dropdown) => {
+        dropdown.addOptions({
+          auto: "Automatic",
+          dark: "Dark",
+          light: "Light",
+        })
+          .setValue(settings.codepenTheme)
+          .onChange(async (value: "auto" | "dark" | "light") => {
+            await saveSettings({ codepenTheme: value });
+          });
+      });
+
+    const defaultTabSetting = new Setting(containerEl)
+      .setName("Default tab")
+      .addDropdown((dropdown) => {
+        dropdown.addOptions({ html: "HTML", css: "CSS", js: "JS" })
+          .setValue(settings.codepenDefaultTab)
+          .onChange(async (value: "html" | "css" | "js") => {
+            await saveSettings({ codepenDefaultTab: value });
+          });
+      });
+
+    const showResultSetting = new Setting(containerEl)
+      .setName("Show result")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(settings.codepenShowResult)
+          .onChange(async (value) => {
+            await saveSettings({ codepenShowResult: value });
+          });
+      });
+
+    const clickToLoadSetting = new Setting(containerEl)
+      .setName("Click to load")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(settings.codepenClickToLoad)
+          .onChange(async (value) => {
+            await saveSettings({ codepenClickToLoad: value });
+          });
+      });
+
+    const editableSetting = new Setting(containerEl)
+      .setName("Codepen editable")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(settings.codepenEditable)
+          .onChange(async (value) => {
+            await saveSettings({ codepenEditable: value });
+          });
+      });
+
+    return [
+      themeSetting,
+      defaultTabSetting,
+      showResultSetting,
+      clickToLoadSetting,
+      editableSetting,
+    ];
   }
 }

@@ -1,9 +1,27 @@
-import { PluginSettings } from "settings";
+import { Setting } from "obsidian";
+import { EnableEmbeds, PluginSettings } from "settings";
 
+export type EnableEmbedKey = keyof EnableEmbeds;
 export interface EmbedSource {
-  canHandle: (link: string, settings: PluginSettings) => boolean;
-  createEmbed: (link: string, container: HTMLElement) => HTMLElement;
-  afterAllEmbeds?: () => void;
+  readonly name: string;
+  readonly enabledKey: EnableEmbedKey;
+  readonly regex: RegExp;
+  createEmbed(
+    link: string,
+    container: HTMLElement,
+    settings: Readonly<PluginSettings>,
+    currentTheme: "light" | "dark",
+  ): HTMLElement;
+  afterAllEmbeds?(): void;
+  updateTheme?(
+    theme: "dark" | "light",
+    settings: Readonly<PluginSettings>,
+  ): void;
+  createAdditionalSettings?(
+    containerEl: HTMLElement,
+    settings: Readonly<PluginSettings>,
+    saveSettings: (updates: Partial<PluginSettings>) => Promise<void>,
+  ): Setting[];
 }
 
 export * from "./codepen";

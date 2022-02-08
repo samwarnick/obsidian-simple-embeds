@@ -1,6 +1,6 @@
-import { EmbedSource } from "./";
+import { EmbedSource, EnableEmbedKey } from "./";
+import { Setting } from "obsidian";
 import { PluginSettings } from "settings";
-import SimpleEmbedsPlugin from "main";
 
 const TWEET_LINK = new RegExp(/https:\/\/(?:mobile\.)?twitter\.com\/.+\/(\d+)/);
 
@@ -26,19 +26,22 @@ declare global {
 }
 
 export class TwitterEmbed implements EmbedSource {
-  constructor(private plugin: SimpleEmbedsPlugin) {}
+  name = "Twitter";
+  enabledKey: EnableEmbedKey = "replaceTwitterLinks";
+  regex = TWEET_LINK;
 
-  canHandle(link: string, settings: PluginSettings) {
-    return settings.replaceTwitterLinks && TWEET_LINK.test(link);
-  }
-
-  createEmbed(link: string, container: HTMLElement) {
+  createEmbed(
+    link: string,
+    container: HTMLElement,
+    settings: Readonly<PluginSettings>,
+    currentTheme: "light" | "dark",
+  ) {
     this._ensureTwitterLoaded();
     const tweetId = link.match(TWEET_LINK)[1];
     container.id = `TweetContainer${tweetId}`;
-    const theme = this.plugin.settings.twitterTheme == "auto"
-      ? this.plugin.currentTheme
-      : this.plugin.settings.twitterTheme;
+    const theme = settings.twitterTheme == "auto"
+      ? currentTheme
+      : settings.twitterTheme;
     window.twttr.ready(() => {
       window.twttr.widgets.createTweet(tweetId, container, {
         theme,
@@ -49,8 +52,8 @@ export class TwitterEmbed implements EmbedSource {
     return container;
   }
 
-  updateTheme(theme: "dark" | "light") {
-    if (this.plugin.settings.twitterTheme !== "auto") {
+  updateTheme(theme: "dark" | "light", settings: Readonly<PluginSettings>) {
+    if (settings.twitterTheme !== "auto") {
       return;
     }
     const twitterEmbeds = document.querySelectorAll(
@@ -85,5 +88,27 @@ export class TwitterEmbed implements EmbedSource {
 
       return t;
     })(document, "script", "twitter-wjs");
+  }
+
+  createAdditionalSettings(
+    containerEl: HTMLElement,
+    settings: Readonly<PluginSettings>,
+    saveSettings: (updates: Partial<PluginSettings>) => Promise<void>,
+  ) {
+    const themeSetting = new Setting(containerEl)
+      .setName("Theme")
+      .addDropdown((dropdown) => {
+        dropdown.addOptions({
+          auto: "Automatic",
+          dark: "Dark",
+          light: "Light",
+        })
+          .setValue(settings.twitterTheme)
+          .onChange(async (value: "auto" | "dark" | "light") => {
+            await saveSettings({ twitterTheme: value });
+          });
+      });
+
+    return [themeSetting];
   }
 }
