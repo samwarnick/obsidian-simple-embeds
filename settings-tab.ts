@@ -33,8 +33,6 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
 
     // Toggles to enabled/disabled embed sources.
     this.plugin.embedSources.forEach((embedSource) => {
-      console.log(embedSource.constructor.name);
-
       new Setting(containerEl).setName(embedSource.name).addToggle((toggle) => {
         toggle
           .setValue(this.plugin.settings[embedSource.enabledKey])

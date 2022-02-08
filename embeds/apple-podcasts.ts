@@ -48,8 +48,4 @@ export class ApplePodcastsEmbed implements EmbedSource {
       embed.src = src;
     });
   }
-
-  getName() {
-    return "Apple Podcasts";
-  }
 }

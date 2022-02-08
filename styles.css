@@ -54,9 +54,9 @@
   height: 100%;
 }
 
-/* Apple Podcasts */
+/* Apple Podcasts & TV */
 
-.embed-container.apple-podcasts iframe {
+.embed-container.apple-podcasts iframe, .embed-container.apple-tv iframe {
   width: 100%;
   overflow: hidden;
   border-top-left-radius: 10px;
@@ -64,6 +64,16 @@
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
   background-color: transparent;
+}
+
+.embed-container.apple-tv .fake-link {
+  display: block;
+  position: absolute;
+  content: '';
+  height: 150px;
+  width: 150px;
+  top: calc(50% - 75px);
+  left: calc(50% - 75px);
 }
 
 /* Settings */

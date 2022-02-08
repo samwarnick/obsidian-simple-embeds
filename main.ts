@@ -1,5 +1,6 @@
 import {
   ApplePodcastsEmbed,
+  AppleTVEmbed,
   CodepenEmbed,
   EmbedSource,
   FlatIOEmbed,
@@ -23,7 +24,8 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new NoteflightEmbed(),
     new CodepenEmbed(),
     new GitHubGistEmbed(),
-    new ApplePodcastsEmbed()
+    new ApplePodcastsEmbed(),
+    new AppleTVEmbed()
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";

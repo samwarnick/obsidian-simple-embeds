@@ -1,5 +1,6 @@
 export interface EnableEmbeds {
   replaceApplePodcastsLinks: boolean;
+  replaceAppleTVLinks: boolean;
   replaceCodepenLinks: boolean;
   replaceFlatIOLinks: boolean;
   replaceGitHubGistLinks: boolean;
@@ -36,6 +37,7 @@ export interface PluginSettings
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   replaceApplePodcastsLinks: true,
+  replaceAppleTVLinks: true,
   replaceCodepenLinks: true,
   replaceFlatIOLinks: true,
   replaceGitHubGistLinks: true,
