@@ -1,4 +1,5 @@
 export interface EnableEmbeds {
+  replaceAppleMusicLinks: boolean;
   replaceApplePodcastsLinks: boolean;
   replaceAppleTVLinks: boolean;
   replaceCodepenLinks: boolean;
@@ -36,6 +37,7 @@ export interface PluginSettings
 }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
+  replaceAppleMusicLinks: true,
   replaceApplePodcastsLinks: true,
   replaceAppleTVLinks: true,
   replaceCodepenLinks: true,

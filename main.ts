@@ -1,4 +1,5 @@
 import {
+  AppleMusicEmbed,
   ApplePodcastsEmbed,
   AppleTVEmbed,
   CodepenEmbed,
@@ -24,6 +25,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new NoteflightEmbed(),
     new CodepenEmbed(),
     new GitHubGistEmbed(),
+    new AppleMusicEmbed(),
     new ApplePodcastsEmbed(),
     new AppleTVEmbed()
   ];

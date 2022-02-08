@@ -24,6 +24,7 @@ export interface EmbedSource {
   ): Setting[];
 }
 
+export * from "./apple-music";
 export * from "./apple-podcasts";
 export * from "./apple-tv";
 export * from "./codepen";
