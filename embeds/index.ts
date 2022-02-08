@@ -24,6 +24,7 @@ export interface EmbedSource {
   ): Setting[];
 }
 
+export * from "./apple-podcasts";
 export * from "./codepen";
 export * from "./flat_io";
 export * from "./github_gist";
