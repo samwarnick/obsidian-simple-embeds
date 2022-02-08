@@ -1,4 +1,4 @@
-import { YouTubeEmbed } from "../embeds";
+import { YouTubeEmbed } from "../embeds/youtube";
 
 let youtube: YouTubeEmbed;
 
@@ -9,14 +9,6 @@ beforeEach(() => {
 test.each([
   {
     link: "https://twitter.com/test/status/1111111111111111111",
-    expected: false,
-  },
-  {
-    link: "https://twitter.com/test/status/1111111111111111111",
-    expected: false,
-  },
-  {
-    link: "https://www.youtube.com/watch?v=xxxxxxxxxxx",
     expected: false,
   },
   {
@@ -52,9 +44,9 @@ test.each([
     expected: true,
   },
 ])(
-  "canHandle returns $expected when link is $link and replaceYouTubeLinks is $settings.replaceYouTubeLinks",
+  "test returns $expected when link is $link",
   ({ link, expected }) => {
-    expect(youtube.regex.test).toBe(expected);
+    expect(youtube.regex.test(link)).toBe(expected);
   },
 );
 
