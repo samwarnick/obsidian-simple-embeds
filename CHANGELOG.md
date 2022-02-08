@@ -15,6 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Add support for Apple Podcasts links.
 - Add partial support for Apple TV links.
   - For some reason, playback fails. Clicking play will open Apple TV instead.
+- Add partial support for Apple Music.
+  - Unable to sign into your Apple Music account, so you only get the previews.
 
 # [1.8.0]
 
