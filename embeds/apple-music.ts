@@ -37,6 +37,7 @@ export class AppleMusicEmbed implements EmbedSource {
     iframe.style.width = "100%";
     iframe.style.overflow = "hidden";
     iframe.style.background = "transparent";
+    container.classList.add("apple-music");
     container.appendChild(iframe);
 
     return container;
