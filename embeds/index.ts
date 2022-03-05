@@ -1,5 +1,5 @@
 import { Setting } from "obsidian";
-import { EnableEmbeds, PluginSettings } from "settings";
+import { EnableEmbeds, PluginSettings } from "../settings";
 
 export type EnableEmbedKey = keyof EnableEmbeds;
 export interface EmbedSource {

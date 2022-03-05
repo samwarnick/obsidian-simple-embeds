@@ -1,5 +1,5 @@
-import { EmbedSource, EnableEmbedKey } from "embeds";
-import { PluginSettings } from "settings";
+import { EmbedSource, EnableEmbedKey } from "../embeds";
+import { PluginSettings } from "../settings";
 
 const APPLE_PODCAST_LINK = new RegExp(
   /https:\/\/podcasts.apple.com\/(?<locale>[a-z-]+)\/podcast\/(?<content>.*\/id[0-9]+(?:\?i=[0-9]+)?)/,

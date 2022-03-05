@@ -10,10 +10,10 @@ import {
   NoteflightEmbed,
   TwitterEmbed,
   YouTubeEmbed,
-} from "embeds";
+} from "./embeds";
 import { debounce, Debouncer, MarkdownView, Plugin } from "obsidian";
-import { DEFAULT_SETTINGS, PluginSettings } from "settings";
-import { SimpleEmbedPluginSettingTab } from "settings-tab";
+import { DEFAULT_SETTINGS, PluginSettings } from "./settings";
+import { SimpleEmbedPluginSettingTab } from "./settings-tab";
 
 export default class SimpleEmbedsPlugin extends Plugin {
   settings: PluginSettings;

@@ -1,5 +1,5 @@
-import { EmbedSource, EnableEmbedKey } from "embeds";
-import { PluginSettings } from "settings";
+import { EmbedSource, EnableEmbedKey } from "../embeds";
+import { PluginSettings } from "../settings";
 
 const APPLE_TV_LINK = new RegExp(
   /https:\/\/tv.apple.com\/(?<locale>[a-z-]+)\/(?<type>episode|show|movie)\/(?<content>\S*)/,

@@ -1,6 +1,6 @@
 import { EmbedSource, EnableEmbedKey } from "./";
 import { Setting } from "obsidian";
-import { PluginSettings } from "settings";
+import { PluginSettings } from "../settings";
 
 const CODEPEN_LINK = new RegExp(/https:\/\/codepen\.io\/(\w+)\/(?:pen)\/(\w+)/);
 

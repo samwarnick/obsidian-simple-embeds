@@ -1,4 +1,3 @@
-import { EnableEmbeds } from "settings";
 import { EmbedSource, EnableEmbedKey } from "./";
 
 const APPLE_MUSIC_LINK = new RegExp(
