@@ -59,6 +59,7 @@ export class TwitterEmbed implements EmbedSource {
     const twitterEmbeds = document.querySelectorAll(
       ".embed-container .twitter-tweet.twitter-tweet-rendered iframe",
     ) as NodeListOf<HTMLIFrameElement>;
+    console.log(twitterEmbeds);
     twitterEmbeds.forEach((embed) => {
       let src = embed.src;
       if (theme === "dark") {

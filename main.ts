@@ -74,8 +74,10 @@ export default class SimpleEmbedsPlugin extends Plugin {
       if (
         previousTheme !== this.currentTheme
       ) {
-        this.embedSources.forEach((embedSource) => {
-          embedSource.updateTheme?.(this.currentTheme, this.settings);
+        setTimeout(() => {
+          this.embedSources.forEach((embedSource) => {
+            embedSource.updateTheme?.(this.currentTheme, this.settings);
+          });
         });
       }
     }));
@@ -84,7 +86,6 @@ export default class SimpleEmbedsPlugin extends Plugin {
   onunload() {
     console.log(`Unloading ${this.manifest.name}`);
     this.processedMarkdown = null;
-    // TODO: Clear all widgets
   }
 
   async loadSettings() {
@@ -126,8 +127,6 @@ export default class SimpleEmbedsPlugin extends Plugin {
     }
 
     const href = a.getAttribute("href");
-    const container = document.createElement("div");
-    container.classList.add("embed-container");
 
     // Try and find an enabled embed source that can handle the link.
     let embedSource = this.embedSources.find((source) => {
@@ -135,20 +134,31 @@ export default class SimpleEmbedsPlugin extends Plugin {
     });
 
     if (embedSource && replaceWithEmbed) {
-      const embed = embedSource.createEmbed(
-        href,
-        container,
-        this.settings,
-        this.currentTheme,
-      );
-      if (fullWidth) {
-        embed.classList.add("full-width");
-      }
-      if (this.settings.centerEmbeds) {
-        embed.classList.add("center");
-      }
+      const embed = this.createEmbed(embedSource, href, fullWidth);
       this._insertEmbed(a, embed);
     }
+  }
+
+  private createEmbed(
+    embedSource: EmbedSource,
+    link: string,
+    fullWidth: boolean,
+  ) {
+    const container = document.createElement("div");
+    container.classList.add("embed-container");
+    const embed = embedSource.createEmbed(
+      link,
+      container,
+      this.settings,
+      this.currentTheme,
+    );
+    if (fullWidth) {
+      embed.classList.add("full-width");
+    }
+    if (this.settings.centerEmbeds) {
+      embed.classList.add("center");
+    }
+    return embed;
   }
 
   private _insertEmbed(a: HTMLAnchorElement, container: HTMLElement) {
@@ -172,9 +182,8 @@ export default class SimpleEmbedsPlugin extends Plugin {
     class EmbedWidget extends WidgetType {
       constructor(
         readonly link: string,
-        readonly embed: EmbedSource,
-        readonly settings: Readonly<PluginSettings>,
-        readonly theme: "light" | "dark",
+        readonly embedSource: EmbedSource,
+        readonly plugin: SimpleEmbedsPlugin,
       ) {
         super();
       }
@@ -184,8 +193,12 @@ export default class SimpleEmbedsPlugin extends Plugin {
       }
 
       toDOM() {
-        let el = document.createElement("div");
-        return this.embed.createEmbed(this.link, el, this.settings, this.theme);
+        const embed = this.plugin.createEmbed(
+          this.embedSource,
+          this.link,
+          false,
+        );
+        return embed;
       }
 
       ignoreEvent() {
@@ -253,8 +266,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
                   widget: new EmbedWidget(
                     link,
                     embedSource,
-                    plugin.settings,
-                    plugin.currentTheme,
+                    plugin,
                   ),
                   inclusive: false,
                 });
