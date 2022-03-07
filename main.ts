@@ -11,9 +11,18 @@ import {
   TwitterEmbed,
   YouTubeEmbed,
 } from "./embeds";
-import { debounce, Debouncer, MarkdownView, Plugin } from "obsidian";
+import { debounce, Debouncer, MarkdownView, Plugin, setIcon } from "obsidian";
 import { DEFAULT_SETTINGS, PluginSettings } from "./settings";
 import { SimpleEmbedPluginSettingTab } from "./settings-tab";
+import { RangeSetBuilder } from "@codemirror/rangeset";
+import {
+  Decoration,
+  DecorationSet,
+  EditorView,
+  ViewPlugin,
+  ViewUpdate,
+  WidgetType,
+} from "@codemirror/view";
 
 export default class SimpleEmbedsPlugin extends Plugin {
   settings: PluginSettings;
@@ -27,7 +36,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new GitHubGistEmbed(),
     new AppleMusicEmbed(),
     new ApplePodcastsEmbed(),
-    new AppleTVEmbed()
+    new AppleTVEmbed(),
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
@@ -38,6 +47,9 @@ export default class SimpleEmbedsPlugin extends Plugin {
     this.addSettingTab(new SimpleEmbedPluginSettingTab(this.app, this));
 
     this.currentTheme = this._getCurrentTheme();
+
+    const ext = this.buildAttributesViewPlugin(this);
+    this.registerEditorExtension(ext);
 
     this.processedMarkdown = debounce(() => {
       this.embedSources.forEach((source) => {
@@ -72,6 +84,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
   onunload() {
     console.log(`Unloading ${this.manifest.name}`);
     this.processedMarkdown = null;
+    // TODO: Clear all widgets
   }
 
   async loadSettings() {
@@ -122,7 +135,12 @@ export default class SimpleEmbedsPlugin extends Plugin {
     });
 
     if (embedSource && replaceWithEmbed) {
-      const embed = embedSource.createEmbed(href, container, this.settings, this.currentTheme);
+      const embed = embedSource.createEmbed(
+        href,
+        container,
+        this.settings,
+        this.currentTheme,
+      );
       if (fullWidth) {
         embed.classList.add("full-width");
       }
@@ -144,5 +162,123 @@ export default class SimpleEmbedsPlugin extends Plugin {
     } else {
       parent.replaceChild(container, a);
     }
+  }
+
+  get isLivePreviewSupported(): boolean {
+    return (this.app.vault as any).config?.livePreview;
+  }
+
+  buildAttributesViewPlugin(plugin: SimpleEmbedsPlugin) {
+    class EmbedWidget extends WidgetType {
+      constructor(
+        readonly link: string,
+        readonly embed: EmbedSource,
+        readonly settings: Readonly<PluginSettings>,
+        readonly theme: "light" | "dark",
+      ) {
+        super();
+      }
+
+      eq(other: EmbedWidget) {
+        return other.link === this.link;
+      }
+
+      toDOM() {
+        let el = document.createElement("div");
+        return this.embed.createEmbed(this.link, el, this.settings, this.theme);
+      }
+
+      ignoreEvent() {
+        return true;
+      }
+    }
+
+    const viewPlugin = ViewPlugin.fromClass(
+      class {
+        decorations: DecorationSet;
+
+        constructor(view: EditorView) {
+          this.decorations = this.buildDecorations(view);
+        }
+
+        update(update: ViewUpdate) {
+          if (
+            update.docChanged || update.viewportChanged || update.selectionSet
+          ) {
+            this.decorations = this.buildDecorations(update.view);
+          }
+        }
+
+        destroy() {
+        }
+
+        buildDecorations(view: EditorView) {
+          let builder = new RangeSetBuilder<Decoration>();
+
+          let lines: number[] = [];
+          if (view.state.doc.length > 0) {
+            lines = Array.from(
+              { length: view.state.doc.lines },
+              (_, i) => i + 1,
+            );
+          }
+
+          const currentSelections = [...view.state.selection.ranges];
+
+          for (let n of lines) {
+            const line = view.state.doc.line(n);
+            const startOfLine = line.from;
+            const endOfLine = line.to;
+
+            let currentLine = false;
+
+            currentSelections.forEach((r) => {
+              if (r.from >= startOfLine && r.to <= endOfLine) {
+                currentLine = true;
+                return;
+              }
+            });
+
+            const mdLink = line.text.match(/\[.*\]\(\S*\)/)?.first().trim();
+            if (!currentLine && mdLink) {
+              const start = line.text.indexOf(mdLink) + startOfLine;
+              const end = start + mdLink.length;
+              let embedSource = plugin.embedSources.find((source) => {
+                return plugin.settings[source.enabledKey] &&
+                  source.regex.test(line.text);
+              });
+              if (embedSource) {
+                const link = line.text.match(embedSource.regex).first();
+                const deco = Decoration.replace({
+                  widget: new EmbedWidget(
+                    link,
+                    embedSource,
+                    plugin.settings,
+                    plugin.currentTheme,
+                  ),
+                  inclusive: false,
+                });
+                if (plugin.settings.keepLinksInPreview) {
+                  if (plugin.settings.embedPlacement === "above") {
+                    builder.add(start, start, deco);
+                  } else if (plugin.settings.embedPlacement === "below") {
+                    builder.add(end, end, deco);
+                  }
+                } else {
+                  builder.add(start, end, deco);
+                }
+              }
+            }
+          }
+
+          return builder.finish();
+        }
+      },
+      {
+        decorations: (v) => v.decorations,
+      },
+    );
+
+    return viewPlugin;
   }
 }
