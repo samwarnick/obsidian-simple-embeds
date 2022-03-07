@@ -71,6 +71,16 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
 
     containerEl.createEl("h3", { text: "Advanced Settings" });
 
+    new Setting(containerEl).setName("Show Embeds in Live Preview").addToggle(
+      (toggle) => {
+        toggle
+          .setValue(this.plugin.settings.enableInLivePreview)
+          .onChange(async (value) => {
+            await this.saveSettings({ enableInLivePreview: value });
+          });
+      },
+    );
+
     new Setting(containerEl).setName("Center embeds").addToggle((toggle) => {
       toggle
         .setValue(this.plugin.settings.centerEmbeds)

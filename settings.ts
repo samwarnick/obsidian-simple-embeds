@@ -22,6 +22,7 @@ export interface CodePenAppearanceSettings {
   codepenEditable: boolean;
 }
 export interface AdvancedSettings {
+  enableInLivePreview: boolean;
   centerEmbeds: boolean;
   keepLinksInPreview: boolean;
   embedPlacement: "above" | "below";
@@ -56,6 +57,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   codepenClickToLoad: false,
   codepenEditable: false,
 
+  enableInLivePreview: true,
   centerEmbeds: false,
   keepLinksInPreview: false,
   embedPlacement: "above",

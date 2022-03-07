@@ -48,7 +48,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
 
     this.currentTheme = this._getCurrentTheme();
 
-    const ext = this.buildAttributesViewPlugin(this);
+    const ext = this.buildSimpleEmbedsViewPlugin(this);
     this.registerEditorExtension(ext);
 
     this.processedMarkdown = debounce(() => {
@@ -97,6 +97,9 @@ export default class SimpleEmbedsPlugin extends Plugin {
     await this.saveData(this.settings);
     const view = this.app.workspace.getActiveViewOfType(MarkdownView);
     view?.previewMode?.rerender(true);
+    view?.editor?.transaction({
+      selection: { from: { line: 0, ch: 0 }, to: { line: 0, ch: 0 } },
+    });
   }
 
   private _getCurrentTheme(): "dark" | "light" {
@@ -175,10 +178,11 @@ export default class SimpleEmbedsPlugin extends Plugin {
   }
 
   get isLivePreviewSupported(): boolean {
-    return (this.app.vault as any).config?.livePreview;
+    return (this.app.vault as any).config?.livePreview &&
+      this.settings.enableInLivePreview;
   }
 
-  buildAttributesViewPlugin(plugin: SimpleEmbedsPlugin) {
+  buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
     class EmbedWidget extends WidgetType {
       constructor(
         readonly link: string,
@@ -227,6 +231,10 @@ export default class SimpleEmbedsPlugin extends Plugin {
 
         buildDecorations(view: EditorView) {
           let builder = new RangeSetBuilder<Decoration>();
+
+          if (!plugin.isLivePreviewSupported) {
+            return builder.finish();
+          }
 
           let lines: number[] = [];
           if (view.state.doc.length > 0) {
