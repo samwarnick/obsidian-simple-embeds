@@ -14,6 +14,7 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
   class EmbedWidget extends WidgetType {
     constructor(
       readonly link: string,
+      readonly fullWidth: boolean,
       readonly embedSource: EmbedSource,
       readonly plugin: SimpleEmbedsPlugin,
     ) {
@@ -21,14 +22,14 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
     }
 
     eq(other: EmbedWidget) {
-      return other.link === this.link;
+      return other.link === this.link && other.fullWidth === this.fullWidth;
     }
 
     toDOM() {
       const embed = this.plugin.createEmbed(
         this.embedSource,
         this.link,
-        false,
+        this.fullWidth,
       );
       return embed;
     }
@@ -96,11 +97,15 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
               return plugin.settings[source.enabledKey] &&
                 source.regex.test(line.text);
             });
-            if (embedSource) {
+            const replaceWithEmbed = plugin.shouldReplaceWithEmbed(mdLink);
+            const fullWidth = mdLink.includes("|fullwidth");
+            this.hideOptions(mdLink, startOfLine, builder);
+            if (embedSource && replaceWithEmbed) {
               const link = line.text.match(embedSource.regex).first();
               const deco = Decoration.replace({
                 widget: new EmbedWidget(
                   link,
+                  fullWidth,
                   embedSource,
                   plugin,
                 ),
@@ -120,6 +125,22 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
         }
 
         return builder.finish();
+      }
+
+      hideOptions(
+        text: string,
+        startOfLine: number,
+        builder: RangeSetBuilder<Decoration>,
+      ) {
+        for (let option of ["|noembed", "|embed", "|fullwidth"]) {
+          if (text.includes(option)) {
+            const start = text.indexOf(option) + startOfLine;
+            const end = start + option.length;
+
+            const deco = Decoration.replace({});
+            builder.add(start, end, deco);
+          }
+        }
       }
     },
     {
