@@ -127,7 +127,13 @@ export default class SimpleEmbedsPlugin extends Plugin {
     });
 
     if (embedSource && replaceWithEmbed) {
-      const embed = this.createEmbed(embedSource, href, fullWidth);
+      const embed = this.createEmbed(
+        embedSource,
+        href,
+        fullWidth,
+        this.settings.centerEmbeds,
+        this.settings.keepLinksInPreview,
+      );
       this._insertEmbed(a, embed);
     }
   }
@@ -143,6 +149,8 @@ export default class SimpleEmbedsPlugin extends Plugin {
     embedSource: EmbedSource,
     link: string,
     fullWidth: boolean,
+    centered: boolean,
+    keepLinks: boolean,
   ) {
     const container = document.createElement("div");
     container.classList.add("embed-container");
@@ -155,8 +163,11 @@ export default class SimpleEmbedsPlugin extends Plugin {
     if (fullWidth) {
       embed.classList.add("full-width");
     }
-    if (this.settings.centerEmbeds) {
+    if (centered) {
       embed.classList.add("center");
+    }
+    if (!keepLinks) {
+      embed.classList.add("hide-link");
     }
     return embed;
   }

@@ -22,6 +22,7 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
       readonly link: string,
       readonly fullWidth: boolean,
       readonly centered: boolean,
+      readonly keepLinks: boolean,
       readonly embedSource: EmbedSource,
       readonly plugin: SimpleEmbedsPlugin,
     ) {
@@ -30,7 +31,7 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
 
     eq(other: EmbedWidget) {
       return other.link === this.link && other.fullWidth === this.fullWidth &&
-        other.centered === this.centered;
+        other.centered === this.centered && other.keepLinks === this.keepLinks;
     }
 
     toDOM() {
@@ -38,6 +39,8 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
         this.embedSource,
         this.link,
         this.fullWidth,
+        this.centered,
+        this.keepLinks,
       );
       return embed;
     }
@@ -119,10 +122,10 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
                   link,
                   fullWidth,
                   plugin.settings.centerEmbeds,
+                  plugin.settings.keepLinksInPreview,
                   embedSource,
                   plugin,
                 ),
-                inclusive: false,
               });
               if (plugin.settings.keepLinksInPreview) {
                 if (plugin.settings.embedPlacement === "above") {
