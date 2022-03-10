@@ -10,11 +10,18 @@ import {
 import { EmbedSource } from "./embeds";
 import SimpleEmbedsPlugin from "./main";
 
+interface DecorationDef {
+  from: number;
+  to: number;
+  deco: Decoration;
+}
+
 export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
   class EmbedWidget extends WidgetType {
     constructor(
       readonly link: string,
       readonly fullWidth: boolean,
+      readonly centered: boolean,
       readonly embedSource: EmbedSource,
       readonly plugin: SimpleEmbedsPlugin,
     ) {
@@ -22,7 +29,8 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
     }
 
     eq(other: EmbedWidget) {
-      return other.link === this.link && other.fullWidth === this.fullWidth;
+      return other.link === this.link && other.fullWidth === this.fullWidth &&
+        other.centered === this.centered;
     }
 
     toDOM() {
@@ -60,6 +68,7 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
 
       buildDecorations(view: EditorView) {
         let builder = new RangeSetBuilder<Decoration>();
+        let definitions: DecorationDef[] = [];
 
         if (!plugin.isLivePreviewSupported) {
           return builder.finish();
@@ -99,13 +108,17 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
             });
             const replaceWithEmbed = plugin.shouldReplaceWithEmbed(mdLink);
             const fullWidth = mdLink.includes("|fullwidth");
-            this.hideOptions(mdLink, startOfLine, builder);
+            definitions.push(...this.hideOptions(
+              mdLink,
+              startOfLine,
+            ));
             if (embedSource && replaceWithEmbed) {
               const link = line.text.match(embedSource.regex).first();
               const deco = Decoration.replace({
                 widget: new EmbedWidget(
                   link,
                   fullWidth,
+                  plugin.settings.centerEmbeds,
                   embedSource,
                   plugin,
                 ),
@@ -113,16 +126,35 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
               });
               if (plugin.settings.keepLinksInPreview) {
                 if (plugin.settings.embedPlacement === "above") {
-                  builder.add(start, start, deco);
+                  definitions.push({
+                    from: start,
+                    to: start,
+                    deco,
+                  });
                 } else if (plugin.settings.embedPlacement === "below") {
-                  builder.add(end, end, deco);
+                  definitions.push({
+                    from: end,
+                    to: end,
+                    deco,
+                  });
                 }
               } else {
-                builder.add(start, end, deco);
+                definitions.push({
+                  from: start,
+                  to: end,
+                  deco,
+                });
               }
             }
           }
         }
+
+        definitions.sort((a, b) => {
+          return a.from - b.from;
+        });
+        definitions.forEach(({ from, to, deco }) =>
+          builder.add(from, to, deco)
+        );
 
         return builder.finish();
       }
@@ -130,17 +162,22 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
       hideOptions(
         text: string,
         startOfLine: number,
-        builder: RangeSetBuilder<Decoration>,
       ) {
+        const definitions: DecorationDef[] = [];
         for (let option of ["|noembed", "|embed", "|fullwidth"]) {
           if (text.includes(option)) {
-            const start = text.indexOf(option) + startOfLine;
-            const end = start + option.length;
+            const from = text.indexOf(option) + startOfLine;
+            const to = from + option.length;
 
             const deco = Decoration.replace({});
-            builder.add(start, end, deco);
+            definitions.push({
+              from,
+              to,
+              deco,
+            });
           }
         }
+        return definitions;
       }
     },
     {
