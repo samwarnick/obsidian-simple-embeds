@@ -114,7 +114,7 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
             });
             const replaceWithEmbed = plugin.shouldReplaceWithEmbed(mdLink);
             const fullWidth = mdLink.includes("|fullwidth");
-            definitions.push(...this.hideOptions(mdLink, startOfLine));
+            definitions.push(...this.hideOptions(mdLink, start));
             if (embedSource && replaceWithEmbed) {
               const link = line.text.match(embedSource.regex).first();
 
@@ -135,11 +135,11 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
         return builder.finish();
       }
 
-      hideOptions(text: string, startOfLine: number) {
+      hideOptions(text: string, startOfLink: number) {
         const definitions: DecorationDef[] = [];
         for (let option of ["|noembed", "|embed", "|fullwidth"]) {
           if (text.includes(option)) {
-            const from = text.indexOf(option) + startOfLine;
+            const from = text.indexOf(option) + startOfLink;
             const to = from + option.length;
 
             const deco = Decoration.replace({});
