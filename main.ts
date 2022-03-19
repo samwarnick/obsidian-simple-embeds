@@ -59,20 +59,20 @@ export default class SimpleEmbedsPlugin extends Plugin {
       this.processedMarkdown();
     });
 
-    this.registerEvent(this.app.workspace.on("css-change", () => {
-      // Theme has potentially changed.
-      const previousTheme = this.currentTheme;
-      this.currentTheme = this._getCurrentTheme();
-      if (
-        previousTheme !== this.currentTheme
-      ) {
-        setTimeout(() => {
-          this.embedSources.forEach((embedSource) => {
-            embedSource.updateTheme?.(this.currentTheme, this.settings);
+    this.registerEvent(
+      this.app.workspace.on("css-change", () => {
+        // Theme has potentially changed.
+        const previousTheme = this.currentTheme;
+        this.currentTheme = this._getCurrentTheme();
+        if (previousTheme !== this.currentTheme) {
+          setTimeout(() => {
+            this.embedSources.forEach((embedSource) => {
+              embedSource.updateTheme?.(this.currentTheme, this.settings);
+            });
           });
-        });
-      }
-    }));
+        }
+      }),
+    );
   }
 
   onunload() {
@@ -186,7 +186,9 @@ export default class SimpleEmbedsPlugin extends Plugin {
   }
 
   get isLivePreviewSupported(): boolean {
-    return (this.app.vault as any).config?.livePreview &&
-      this.settings.enableInLivePreview;
+    return (
+      (this.app.vault as any).config?.livePreview &&
+      this.settings.enableInLivePreview
+    );
   }
 }

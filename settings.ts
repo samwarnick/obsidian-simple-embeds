@@ -30,12 +30,10 @@ export interface AdvancedSettings {
 }
 
 export interface PluginSettings
-  extends
-    EnableEmbeds,
+  extends EnableEmbeds,
     TwitterAppearanceSettings,
     CodePenAppearanceSettings,
-    AdvancedSettings {
-}
+    AdvancedSettings {}
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   replaceAppleMusicLinks: true,

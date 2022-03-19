@@ -30,8 +30,12 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
     }
 
     eq(other: EmbedWidget) {
-      return other.link === this.link && other.fullWidth === this.fullWidth &&
-        other.centered === this.centered && other.keepLinks === this.keepLinks;
+      return (
+        other.link === this.link &&
+        other.fullWidth === this.fullWidth &&
+        other.centered === this.centered &&
+        other.keepLinks === this.keepLinks
+      );
     }
 
     toDOM() {
@@ -43,10 +47,6 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
         this.keepLinks,
       );
       return embed;
-    }
-
-    ignoreEvent() {
-      return true;
     }
   }
 
@@ -60,14 +60,15 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
 
       update(update: ViewUpdate) {
         if (
-          update.docChanged || update.viewportChanged || update.selectionSet
+          update.docChanged ||
+          update.viewportChanged ||
+          update.selectionSet
         ) {
           this.decorations = this.buildDecorations(update.view);
         }
       }
 
-      destroy() {
-      }
+      destroy() {}
 
       buildDecorations(view: EditorView) {
         let builder = new RangeSetBuilder<Decoration>();
@@ -79,10 +80,7 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
 
         let lines: number[] = [];
         if (view.state.doc.length > 0) {
-          lines = Array.from(
-            { length: view.state.doc.lines },
-            (_, i) => i + 1,
-          );
+          lines = Array.from({ length: view.state.doc.lines }, (_, i) => i + 1);
         }
 
         const currentSelections = [...view.state.selection.ranges];
@@ -101,53 +99,28 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
             }
           });
 
-          const mdLink = line.text.match(/\[.*\]\(\S*\)/)?.first().trim();
+          const mdLink = line.text
+            .match(/\[.*\]\(\S*\)/)
+            ?.first()
+            .trim();
           if (!currentLine && mdLink) {
             const start = line.text.indexOf(mdLink) + startOfLine;
             const end = start + mdLink.length;
             let embedSource = plugin.embedSources.find((source) => {
-              return plugin.settings[source.enabledKey] &&
-                source.regex.test(line.text);
+              return (
+                plugin.settings[source.enabledKey] &&
+                source.regex.test(line.text)
+              );
             });
             const replaceWithEmbed = plugin.shouldReplaceWithEmbed(mdLink);
             const fullWidth = mdLink.includes("|fullwidth");
-            definitions.push(...this.hideOptions(
-              mdLink,
-              startOfLine,
-            ));
+            definitions.push(...this.hideOptions(mdLink, startOfLine));
             if (embedSource && replaceWithEmbed) {
               const link = line.text.match(embedSource.regex).first();
-              const deco = Decoration.replace({
-                widget: new EmbedWidget(
-                  link,
-                  fullWidth,
-                  plugin.settings.centerEmbeds,
-                  plugin.settings.keepLinksInPreview,
-                  embedSource,
-                  plugin,
-                ),
-              });
-              if (plugin.settings.keepLinksInPreview) {
-                if (plugin.settings.embedPlacement === "above") {
-                  definitions.push({
-                    from: start,
-                    to: start,
-                    deco,
-                  });
-                } else if (plugin.settings.embedPlacement === "below") {
-                  definitions.push({
-                    from: end,
-                    to: end,
-                    deco,
-                  });
-                }
-              } else {
-                definitions.push({
-                  from: start,
-                  to: end,
-                  deco,
-                });
-              }
+
+              definitions.push(
+                this.createWidget(link, fullWidth, embedSource, start, end),
+              );
             }
           }
         }
@@ -156,16 +129,13 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
           return a.from - b.from;
         });
         definitions.forEach(({ from, to, deco }) =>
-          builder.add(from, to, deco)
+          builder.add(from, to, deco),
         );
 
         return builder.finish();
       }
 
-      hideOptions(
-        text: string,
-        startOfLine: number,
-      ) {
+      hideOptions(text: string, startOfLine: number) {
         const definitions: DecorationDef[] = [];
         for (let option of ["|noembed", "|embed", "|fullwidth"]) {
           if (text.includes(option)) {
@@ -181,6 +151,46 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
           }
         }
         return definitions;
+      }
+
+      createWidget(
+        link: string,
+        fullWidth: boolean,
+        embedSource: EmbedSource,
+        start: number,
+        end: number,
+      ) {
+        const deco = Decoration.widget({
+          widget: new EmbedWidget(
+            link,
+            fullWidth,
+            plugin.settings.centerEmbeds,
+            plugin.settings.keepLinksInPreview,
+            embedSource,
+            plugin,
+          ),
+        });
+        if (plugin.settings.keepLinksInPreview) {
+          if (plugin.settings.embedPlacement === "above") {
+            return {
+              from: start,
+              to: start,
+              deco,
+            };
+          } else if (plugin.settings.embedPlacement === "below") {
+            return {
+              from: end,
+              to: end,
+              deco,
+            };
+          }
+        } else {
+          return {
+            from: start,
+            to: end,
+            deco,
+          };
+        }
       }
     },
     {
