@@ -99,10 +99,15 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
             }
           });
 
-          const mdLink = line.text
-            .match(/\[.*\]\(\S*\)/)
+          const text = line.text;
+          const mdLink = text
+            .match(/\[([^\[]+)\](\(.*\))/)
             ?.first()
             .trim();
+
+          const isWithinText = !new RegExp(
+            /(?<!([\w+]\s))\[([^\[]+)\](\(.*\))/,
+          ).test(text);
           if (!currentLine && mdLink) {
             const start = line.text.indexOf(mdLink) + startOfLine;
             const end = start + mdLink.length;
@@ -112,7 +117,10 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
                 source.regex.test(line.text)
               );
             });
-            const replaceWithEmbed = plugin.shouldReplaceWithEmbed(mdLink);
+            const replaceWithEmbed = plugin.shouldReplaceWithEmbed(
+              mdLink,
+              isWithinText,
+            );
             const fullWidth = mdLink.includes("|fullwidth");
             definitions.push(...this.hideOptions(mdLink, start));
             if (embedSource && replaceWithEmbed) {

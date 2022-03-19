@@ -109,13 +109,16 @@ export default class SimpleEmbedsPlugin extends Plugin {
         return !!data;
       });
 
-    const disableAutomaticEmbeds = this.settings.disableAutomaticEmbeds;
-    const replaceWithEmbed = this.shouldReplaceWithEmbed(a.innerText);
+    const replaceWithEmbed = this.shouldReplaceWithEmbed(
+      a.innerText,
+      isWithinText,
+    );
     const fullWidth = a.innerText.includes("|fullwidth");
     // Remove any allowed properties:
     // |embed, |noembed, |fullwidth
     a.innerHTML = a.innerHTML.replace(/\|(?:embed|noembed|fullwidth)/g, "");
-    if (isWithinText && !disableAutomaticEmbeds) {
+
+    if (!replaceWithEmbed) {
       return;
     }
 
@@ -126,7 +129,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
       return this.settings[source.enabledKey] && source.regex.test(href);
     });
 
-    if (embedSource && replaceWithEmbed) {
+    if (embedSource) {
       const embed = this.createEmbed(
         embedSource,
         href,
@@ -138,8 +141,11 @@ export default class SimpleEmbedsPlugin extends Plugin {
     }
   }
 
-  shouldReplaceWithEmbed(text: string) {
+  shouldReplaceWithEmbed(text: string, isWithinText: boolean) {
     const disableAutomaticEmbeds = this.settings.disableAutomaticEmbeds;
+    if (isWithinText && !disableAutomaticEmbeds) {
+      return false;
+    }
     return disableAutomaticEmbeds
       ? text.includes("|embed")
       : !text.includes("|noembed");
