@@ -11,9 +11,10 @@ import {
   TwitterEmbed,
   YouTubeEmbed,
 } from "./embeds";
-import { debounce, Debouncer, MarkdownView, Plugin } from "obsidian";
+import { debounce, Debouncer, MarkdownView, Plugin, setIcon } from "obsidian";
 import { DEFAULT_SETTINGS, PluginSettings } from "./settings";
 import { SimpleEmbedPluginSettingTab } from "./settings-tab";
+import { buildSimpleEmbedsViewPlugin } from "./view-plugin";
 
 export default class SimpleEmbedsPlugin extends Plugin {
   settings: PluginSettings;
@@ -27,7 +28,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new GitHubGistEmbed(),
     new AppleMusicEmbed(),
     new ApplePodcastsEmbed(),
-    new AppleTVEmbed()
+    new AppleTVEmbed(),
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
@@ -38,6 +39,9 @@ export default class SimpleEmbedsPlugin extends Plugin {
     this.addSettingTab(new SimpleEmbedPluginSettingTab(this.app, this));
 
     this.currentTheme = this._getCurrentTheme();
+
+    const ext = buildSimpleEmbedsViewPlugin(this);
+    this.registerEditorExtension(ext);
 
     this.processedMarkdown = debounce(() => {
       this.embedSources.forEach((source) => {
@@ -55,18 +59,20 @@ export default class SimpleEmbedsPlugin extends Plugin {
       this.processedMarkdown();
     });
 
-    this.registerEvent(this.app.workspace.on("css-change", () => {
-      // Theme has potentially changed.
-      const previousTheme = this.currentTheme;
-      this.currentTheme = this._getCurrentTheme();
-      if (
-        previousTheme !== this.currentTheme
-      ) {
-        this.embedSources.forEach((embedSource) => {
-          embedSource.updateTheme?.(this.currentTheme, this.settings);
-        });
-      }
-    }));
+    this.registerEvent(
+      this.app.workspace.on("css-change", () => {
+        // Theme has potentially changed.
+        const previousTheme = this.currentTheme;
+        this.currentTheme = this._getCurrentTheme();
+        if (previousTheme !== this.currentTheme) {
+          setTimeout(() => {
+            this.embedSources.forEach((embedSource) => {
+              embedSource.updateTheme?.(this.currentTheme, this.settings);
+            });
+          });
+        }
+      }),
+    );
   }
 
   onunload() {
@@ -83,6 +89,9 @@ export default class SimpleEmbedsPlugin extends Plugin {
     await this.saveData(this.settings);
     const view = this.app.workspace.getActiveViewOfType(MarkdownView);
     view?.previewMode?.rerender(true);
+    view?.editor?.transaction({
+      selection: { from: { line: 0, ch: 0 }, to: { line: 0, ch: 0 } },
+    });
   }
 
   private _getCurrentTheme(): "dark" | "light" {
@@ -100,37 +109,73 @@ export default class SimpleEmbedsPlugin extends Plugin {
         return !!data;
       });
 
-    const disableAutomaticEmbeds = this.settings.disableAutomaticEmbeds;
-    const replaceWithEmbed = disableAutomaticEmbeds
-      ? a.innerText.includes("|embed")
-      : !a.innerText.includes("|noembed");
+    const replaceWithEmbed = this.shouldReplaceWithEmbed(
+      a.innerText,
+      isWithinText,
+    );
     const fullWidth = a.innerText.includes("|fullwidth");
     // Remove any allowed properties:
     // |embed, |noembed, |fullwidth
     a.innerHTML = a.innerHTML.replace(/\|(?:embed|noembed|fullwidth)/g, "");
-    if (isWithinText && !disableAutomaticEmbeds) {
+
+    if (!replaceWithEmbed) {
       return;
     }
 
     const href = a.getAttribute("href");
-    const container = document.createElement("div");
-    container.classList.add("embed-container");
 
     // Try and find an enabled embed source that can handle the link.
     let embedSource = this.embedSources.find((source) => {
       return this.settings[source.enabledKey] && source.regex.test(href);
     });
 
-    if (embedSource && replaceWithEmbed) {
-      const embed = embedSource.createEmbed(href, container, this.settings, this.currentTheme);
-      if (fullWidth) {
-        embed.classList.add("full-width");
-      }
-      if (this.settings.centerEmbeds) {
-        embed.classList.add("center");
-      }
+    if (embedSource) {
+      const embed = this.createEmbed(
+        embedSource,
+        href,
+        fullWidth,
+        this.settings.centerEmbeds,
+        this.settings.keepLinksInPreview,
+      );
       this._insertEmbed(a, embed);
     }
+  }
+
+  shouldReplaceWithEmbed(text: string, isWithinText: boolean) {
+    const disableAutomaticEmbeds = this.settings.disableAutomaticEmbeds;
+    if (isWithinText && !disableAutomaticEmbeds) {
+      return false;
+    }
+    return disableAutomaticEmbeds
+      ? text.includes("|embed")
+      : !text.includes("|noembed");
+  }
+
+  createEmbed(
+    embedSource: EmbedSource,
+    link: string,
+    fullWidth: boolean,
+    centered: boolean,
+    keepLinks: boolean,
+  ) {
+    const container = document.createElement("div");
+    container.classList.add("embed-container");
+    const embed = embedSource.createEmbed(
+      link,
+      container,
+      this.settings,
+      this.currentTheme,
+    );
+    if (fullWidth) {
+      embed.classList.add("full-width");
+    }
+    if (centered) {
+      embed.classList.add("center");
+    }
+    if (!keepLinks) {
+      embed.classList.add("hide-link");
+    }
+    return embed;
   }
 
   private _insertEmbed(a: HTMLAnchorElement, container: HTMLElement) {
@@ -144,5 +189,12 @@ export default class SimpleEmbedsPlugin extends Plugin {
     } else {
       parent.replaceChild(container, a);
     }
+  }
+
+  get isLivePreviewSupported(): boolean {
+    return (
+      (this.app.vault as any).config?.livePreview &&
+      this.settings.enableInLivePreview
+    );
   }
 }

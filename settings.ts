@@ -22,6 +22,7 @@ export interface CodePenAppearanceSettings {
   codepenEditable: boolean;
 }
 export interface AdvancedSettings {
+  enableInLivePreview: boolean;
   centerEmbeds: boolean;
   keepLinksInPreview: boolean;
   embedPlacement: "above" | "below";
@@ -29,12 +30,10 @@ export interface AdvancedSettings {
 }
 
 export interface PluginSettings
-  extends
-    EnableEmbeds,
+  extends EnableEmbeds,
     TwitterAppearanceSettings,
     CodePenAppearanceSettings,
-    AdvancedSettings {
-}
+    AdvancedSettings {}
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   replaceAppleMusicLinks: true,
@@ -56,6 +55,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   codepenClickToLoad: false,
   codepenEditable: false,
 
+  enableInLivePreview: true,
   centerEmbeds: false,
   keepLinksInPreview: false,
   embedPlacement: "above",

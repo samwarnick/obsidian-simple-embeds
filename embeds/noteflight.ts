@@ -10,7 +10,6 @@ export class NoteflightEmbed implements EmbedSource {
   regex = NOTEFLIGHT_LINK;
 
   createEmbed(link: string, container: HTMLElement) {
-    console.log("creating embed for", link);
     const iframe = document.createElement("iframe");
 
     iframe.src = link.replace("/scores/view/", "/embed/");

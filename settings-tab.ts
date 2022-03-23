@@ -56,12 +56,11 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
           });
           summary.appendChild(title);
           el.appendChild(summary);
-          const settings = embedSource
-            .createAdditionalSettings(
-              el,
-              this.plugin.settings,
-              this.saveSettings.bind(this),
-            );
+          const settings = embedSource.createAdditionalSettings(
+            el,
+            this.plugin.settings,
+            this.saveSettings.bind(this),
+          );
           this.embedSettings[embedSource.constructor.name] = settings;
           const enabled = this.plugin.settings[embedSource.enabledKey];
           this.toggleAdditionalSettings(embedSource, enabled);
@@ -70,6 +69,16 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
     });
 
     containerEl.createEl("h3", { text: "Advanced Settings" });
+
+    new Setting(containerEl)
+      .setName("Show Embeds in Live Preview")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.settings.enableInLivePreview)
+          .onChange(async (value) => {
+            await this.saveSettings({ enableInLivePreview: value });
+          });
+      });
 
     new Setting(containerEl).setName("Center embeds").addToggle((toggle) => {
       toggle
