@@ -137,7 +137,7 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
           return a.from - b.from;
         });
         definitions.forEach(({ from, to, deco }) =>
-          builder.add(from, to, deco),
+          builder.add(from, to, deco)
         );
 
         return builder.finish();
