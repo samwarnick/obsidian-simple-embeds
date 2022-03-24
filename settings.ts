@@ -30,7 +30,8 @@ export interface AdvancedSettings {
 }
 
 export interface PluginSettings
-  extends EnableEmbeds,
+  extends
+    EnableEmbeds,
     TwitterAppearanceSettings,
     CodePenAppearanceSettings,
     AdvancedSettings {}
@@ -55,7 +56,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   codepenClickToLoad: false,
   codepenEditable: false,
 
-  enableInLivePreview: true,
+  enableInLivePreview: false,
   centerEmbeds: false,
   keepLinksInPreview: false,
   embedPlacement: "above",
