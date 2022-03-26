@@ -105,9 +105,6 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
             ?.first()
             .trim();
 
-          const isWithinText = !new RegExp(
-            /(?<!([\w+]\s))\[([^\[]+)\](\(.*\))/,
-          ).test(text);
           if (!currentLine && mdLink) {
             const start = line.text.indexOf(mdLink) + startOfLine;
             const end = start + mdLink.length;
@@ -117,6 +114,7 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
                 source.regex.test(line.text)
               );
             });
+            const isWithinText = this.isWithinText(text);
             const replaceWithEmbed = plugin.shouldReplaceWithEmbed(
               mdLink,
               isWithinText,
@@ -199,6 +197,19 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
             deco,
           };
         }
+      }
+
+      isWithinText(text: string) {
+        const mdLink = text
+          .match(/\[([^\[]+)\](\(.*\))/)[0].trim();
+
+        const lineWithoutLink = text.replace(mdLink, "");
+        const lineWithoutListMarkup = lineWithoutLink.replace(
+          /-|\s\[|(\w|\s)\]/g,
+          "",
+        )
+          .trim();
+        return lineWithoutListMarkup?.length > 0;
       }
     },
     {

@@ -193,7 +193,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
 
   get isLivePreviewSupported(): boolean {
     return (
-      (this.app.vault as any).config?.livePreview &&
+      !!document.querySelector(".is-live-preview") &&
       this.settings.enableInLivePreview
     );
   }
