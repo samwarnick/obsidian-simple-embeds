@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [1.11.0]
+
+### Added
+
+- Support for Bandcamp links.
+- Support for Vimeo links.
+- Support for Reddit links.
+
+# [1.10.2]
+
+### Fixed
+
+- Removed a negative look behind in a regex, which would break in the iOS app.
+
 # [1.10.1]
 
 ### Added
@@ -37,6 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Add support for CodePen embeds
 - Add support for GitHub gists
+
 # [1.7.0]
 
 ### Added
@@ -54,11 +69,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Text within links was being modified even when it was not being replaced with an embed, stripping out any styles.
+
 ## [1.6.1]
 
 ### Fixed
 
 - YouTube links using a start time in the format of 0h0m0s will now be parsed correctly.
+
 ## [1.6.0]
 
 ### Added
@@ -73,6 +90,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Support for [Flat.io](https://flat.io) links.
 - Support for [Noteflight](https://www.noteflight.com) links.
+
 ## [1.4.0] - 2021-10-29
 
 ### Added
@@ -118,7 +136,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release 🎉
 
-[Unreleased]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.10.0...HEAD
+[unreleased]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.11.0...HEAD
+[1.11.0]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.10.2...1.11.0
+[1.10.2]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.10.1...1.10.2
+[1.10.1]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.10.0...1.10.1
 [1.10.0]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.9.0...1.10.0
 [1.9.0]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.7.0...1.8.0
