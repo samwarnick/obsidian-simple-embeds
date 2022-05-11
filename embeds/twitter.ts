@@ -39,9 +39,8 @@ export class TwitterEmbed implements EmbedSource {
     this._ensureTwitterLoaded();
     const tweetId = link.match(TWEET_LINK)[1];
     container.id = `TweetContainer${tweetId}`;
-    const theme = settings.twitterTheme == "auto"
-      ? currentTheme
-      : settings.twitterTheme;
+    const theme =
+      settings.twitterTheme == "auto" ? currentTheme : settings.twitterTheme;
     window.twttr.ready(() => {
       window.twttr.widgets.createTweet(tweetId, container, {
         theme,
@@ -59,7 +58,6 @@ export class TwitterEmbed implements EmbedSource {
     const twitterEmbeds = document.querySelectorAll(
       ".embed-container .twitter-tweet.twitter-tweet-rendered iframe",
     ) as NodeListOf<HTMLIFrameElement>;
-    console.log(twitterEmbeds);
     twitterEmbeds.forEach((embed) => {
       let src = embed.src;
       if (theme === "dark") {
@@ -99,11 +97,12 @@ export class TwitterEmbed implements EmbedSource {
     const themeSetting = new Setting(containerEl)
       .setName("Theme")
       .addDropdown((dropdown) => {
-        dropdown.addOptions({
-          auto: "Automatic",
-          dark: "Dark",
-          light: "Light",
-        })
+        dropdown
+          .addOptions({
+            auto: "Automatic",
+            dark: "Dark",
+            light: "Light",
+          })
           .setValue(settings.twitterTheme)
           .onChange(async (value: "auto" | "dark" | "light") => {
             await saveSettings({ twitterTheme: value });

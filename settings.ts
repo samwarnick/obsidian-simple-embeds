@@ -8,6 +8,7 @@ export interface EnableEmbeds {
   replaceGitHubGistLinks: boolean;
   replaceInstagramLinks: boolean;
   replaceNoteflightLinks: boolean;
+  replaceRedditLinks: boolean;
   replaceTwitterLinks: boolean;
   replaceVimeoLinks: boolean;
   replaceYouTubeLinks: boolean;
@@ -15,13 +16,15 @@ export interface EnableEmbeds {
 export interface TwitterAppearanceSettings {
   twitterTheme: "auto" | "dark" | "light";
 }
-
 export interface CodePenAppearanceSettings {
   codepenTheme: "auto" | "dark" | "light";
   codepenDefaultTab: "html" | "css" | "js";
   codepenShowResult: boolean;
   codepenClickToLoad: boolean;
   codepenEditable: boolean;
+}
+export interface RedditAppearanceSettings {
+  redditTheme: "auto" | "dark" | "light";
 }
 export interface AdvancedSettings {
   enableInLivePreview: boolean;
@@ -35,6 +38,7 @@ export interface PluginSettings
   extends EnableEmbeds,
     TwitterAppearanceSettings,
     CodePenAppearanceSettings,
+    RedditAppearanceSettings,
     AdvancedSettings {}
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -47,6 +51,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceGitHubGistLinks: true,
   replaceInstagramLinks: true,
   replaceNoteflightLinks: true,
+  replaceRedditLinks: true,
   replaceTwitterLinks: true,
   replaceVimeoLinks: true,
   replaceYouTubeLinks: true,
@@ -58,6 +63,8 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   codepenShowResult: true,
   codepenClickToLoad: false,
   codepenEditable: false,
+
+  redditTheme: "auto",
 
   enableInLivePreview: false,
   centerEmbeds: false,

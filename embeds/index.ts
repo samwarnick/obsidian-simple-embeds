@@ -33,6 +33,7 @@ export * from "./flat_io";
 export * from "./github_gist";
 export * from "./instagram";
 export * from "./noteflight";
+export * from "./reddit";
 export * from "./twitter";
 export * from "./vimeo";
 export * from "./youtube";
