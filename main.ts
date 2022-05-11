@@ -10,6 +10,7 @@ import {
   InstagramEmbed,
   NoteflightEmbed,
   TwitterEmbed,
+  VimeoEmbed,
   YouTubeEmbed,
 } from "./embeds";
 import { debounce, Debouncer, MarkdownView, Plugin, setIcon } from "obsidian";
@@ -31,6 +32,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new ApplePodcastsEmbed(),
     new AppleTVEmbed(),
     new BandcampEmbed(),
+    new VimeoEmbed(),
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";

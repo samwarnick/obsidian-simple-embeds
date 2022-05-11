@@ -9,6 +9,7 @@ export interface EnableEmbeds {
   replaceInstagramLinks: boolean;
   replaceNoteflightLinks: boolean;
   replaceTwitterLinks: boolean;
+  replaceVimeoLinks: boolean;
   replaceYouTubeLinks: boolean;
 }
 export interface TwitterAppearanceSettings {
@@ -47,6 +48,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceInstagramLinks: true,
   replaceNoteflightLinks: true,
   replaceTwitterLinks: true,
+  replaceVimeoLinks: true,
   replaceYouTubeLinks: true,
 
   twitterTheme: "auto",
