@@ -9,6 +9,7 @@ import {
   GitHubGistEmbed,
   InstagramEmbed,
   NoteflightEmbed,
+  RedditEmbed,
   TwitterEmbed,
   VimeoEmbed,
   YouTubeEmbed,
@@ -33,6 +34,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new AppleTVEmbed(),
     new BandcampEmbed(),
     new VimeoEmbed(),
+    new RedditEmbed(),
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
