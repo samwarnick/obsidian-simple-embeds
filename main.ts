@@ -2,6 +2,7 @@ import {
   AppleMusicEmbed,
   ApplePodcastsEmbed,
   AppleTVEmbed,
+  BandcampEmbed,
   CodepenEmbed,
   EmbedSource,
   FlatIOEmbed,
@@ -29,6 +30,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new AppleMusicEmbed(),
     new ApplePodcastsEmbed(),
     new AppleTVEmbed(),
+    new BandcampEmbed(),
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
