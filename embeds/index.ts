@@ -27,6 +27,7 @@ export interface EmbedSource {
 export * from "./apple-music";
 export * from "./apple-podcasts";
 export * from "./apple-tv";
+export * from "./bandcamp";
 export * from "./codepen";
 export * from "./flat_io";
 export * from "./github_gist";

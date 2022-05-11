@@ -2,6 +2,7 @@ export interface EnableEmbeds {
   replaceAppleMusicLinks: boolean;
   replaceApplePodcastsLinks: boolean;
   replaceAppleTVLinks: boolean;
+  replaceBandcampLinks: boolean;
   replaceCodepenLinks: boolean;
   replaceFlatIOLinks: boolean;
   replaceGitHubGistLinks: boolean;
@@ -30,8 +31,7 @@ export interface AdvancedSettings {
 }
 
 export interface PluginSettings
-  extends
-    EnableEmbeds,
+  extends EnableEmbeds,
     TwitterAppearanceSettings,
     CodePenAppearanceSettings,
     AdvancedSettings {}
@@ -40,6 +40,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceAppleMusicLinks: true,
   replaceApplePodcastsLinks: true,
   replaceAppleTVLinks: true,
+  replaceBandcampLinks: true,
   replaceCodepenLinks: true,
   replaceFlatIOLinks: true,
   replaceGitHubGistLinks: true,
