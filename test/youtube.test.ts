@@ -43,52 +43,54 @@ test.each([
     link: "https://www.youtube.com/embed/xxxxxxxxxxx?start=3642",
     expected: true,
   },
-])(
-  "test returns $expected when link is $link",
-  ({ link, expected }) => {
-    expect(youtube.regex.test(link)).toBe(expected);
+  {
+    link: "https://www.youtube.com/shorts/xxxxxxxxxxx",
+    expected: true,
   },
-);
+])("test returns $expected when link is $link", ({ link, expected }) => {
+  expect(youtube.regex.test(link)).toBe(expected);
+});
 
 test.each([
   {
     link: "https://www.youtube.com/watch?v=xxxxxxxxxxx",
-    expected: "https://www.youtube.com/embed/xxxxxxxxxxx",
+    expected: ["xxxxxxxxxxx", null],
   },
   {
     link: "https://www.youtube.com/watch?v=xxxxxxxxxxx&t=42s",
-    expected: "https://www.youtube.com/embed/xxxxxxxxxxx?start=42",
+    expected: ["xxxxxxxxxxx", "start=42"],
   },
   {
     link: "https://www.youtube.com/watch?v=xxxxxxxxxxx&t=1h42m42s",
-    expected: "https://www.youtube.com/embed/xxxxxxxxxxx?start=6162",
+    expected: ["xxxxxxxxxxx", "start=6162"],
   },
   {
     link: "https://www.youtube.com/watch?v=xxxxxxxxxxx&t=1h42s",
-    expected: "https://www.youtube.com/embed/xxxxxxxxxxx?start=3642",
+    expected: ["xxxxxxxxxxx", "start=3642"],
   },
   {
     link: "https://youtu.be/xxxxxxxxxxx",
-    expected: "https://www.youtube.com/embed/xxxxxxxxxxx",
+    expected: ["xxxxxxxxxxx", null],
   },
   {
     link: "https://youtu.be/xxxxxxxxxxx?t=42",
-    expected: "https://www.youtube.com/embed/xxxxxxxxxxx?start=42",
+    expected: ["xxxxxxxxxxx", "start=42"],
   },
   {
     link: "https://www.youtube.com/embed/xxxxxxxxxxx",
-    expected: "https://www.youtube.com/embed/xxxxxxxxxxx",
+    expected: ["xxxxxxxxxxx", null],
   },
   {
     link: "https://www.youtube.com/embed/xxxxxxxxxxx?start=3642",
-    expected: "https://www.youtube.com/embed/xxxxxxxxxxx?start=3642",
+    expected: ["xxxxxxxxxxx", "start=3642"],
   },
 ])(
   "createEmbed returns iframe with src of $expected when link is $link",
   ({ link, expected }) => {
     let container: HTMLElement = document.createElement("div");
     container = youtube.createEmbed(link, container);
-    const iframe = container.querySelector("iframe");
-    expect(iframe.src).toBe(expected);
+    const embed = container.querySelector("lite-youtube");
+    expect(embed.getAttribute("videoid")).toBe(expected[0]);
+    expect(embed.getAttribute("params")).toBe(expected[1]);
   },
 );

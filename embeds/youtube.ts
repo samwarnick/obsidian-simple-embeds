@@ -1,7 +1,8 @@
 import { EmbedSource, EnableEmbedKey } from "./";
+import { LiteYTEmbed } from "./lite-yt-embed";
 
 const YOUTUBE_LINK = new RegExp(
-  /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/|be\.com\/embed\/)(?<id>[\w\-\_]*)((?:\?|&)(?:t|start)=(?<startTime>(?:\d+h)?(?:\d+m)?\d+s|\d+))?/,
+  /http(?:s?):\/\/(?:www\.)?youtu(?:be\.com\/watch\?v=|\.be\/|be\.com\/embed\/|be\.com\/shorts\/)(?<id>[\w\-\_]*)((?:\?|&)(?:t|start)=(?<startTime>(?:\d+h)?(?:\d+m)?\d+s|\d+))?/,
 );
 
 export class YouTubeEmbed implements EmbedSource {
@@ -10,31 +11,31 @@ export class YouTubeEmbed implements EmbedSource {
   regex = YOUTUBE_LINK;
 
   createEmbed(link: string, container: HTMLElement) {
+    this._ensureLiteYouTubeLoaded();
+
     const wrapper = document.createElement("div");
     wrapper.classList.add("video-wrapper");
-    const iframe = document.createElement("iframe");
 
     const matches = link.match(YOUTUBE_LINK);
     const videoId = matches.groups.id;
     const startTime = this._normalizeStartTime(matches.groups.startTime);
 
-    let src = `https://www.youtube.com/embed/${videoId}`;
+    const youtube = document.createElement("lite-youtube");
+    youtube.setAttribute("videoid", videoId);
     if (startTime) {
-      src = `${src}?start=${startTime}`;
+      youtube.setAttribute("params", `start=${startTime}`);
     }
-    iframe.src = src;
-    iframe.title = "YouTube video player";
-    iframe.setAttribute("frameborder", "0");
-    iframe.allow =
-      "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; fullscreen;";
-    iframe.setAttribute(
-      "sandbox",
-      "allow-scripts allow-same-origin allow-presentation allow-popups",
-    );
-    wrapper.appendChild(iframe);
+
+    wrapper.appendChild(youtube);
     container.appendChild(wrapper);
     container.classList.add("youtube");
     return container;
+  }
+
+  private _ensureLiteYouTubeLoaded() {
+    if (!customElements.get("lite-youtube")) {
+      customElements.define("lite-youtube", LiteYTEmbed);
+    }
   }
 
   private _normalizeStartTime(startTime: string) {
