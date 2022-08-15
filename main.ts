@@ -20,6 +20,8 @@ import { DEFAULT_SETTINGS, PluginSettings } from "./settings";
 import { SimpleEmbedPluginSettingTab } from "./settings-tab";
 import { buildSimpleEmbedsViewPlugin } from "./view-plugin";
 
+const genericPreviewEmbed = new GenericPreviewEmbed();
+
 export default class SimpleEmbedsPlugin extends Plugin {
   settings: PluginSettings;
   embedSources: EmbedSource[] = [
@@ -36,8 +38,8 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new BandcampEmbed(),
     new VimeoEmbed(),
     new RedditEmbed(),
+    genericPreviewEmbed,
   ];
-  genericPreviewEmbed = new GenericPreviewEmbed();
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
 
@@ -147,15 +149,17 @@ export default class SimpleEmbedsPlugin extends Plugin {
       );
       this._insertEmbed(a, embed);
     } else {
-      // fall back to creating a generic embed
-      const embed = this.createEmbed(
-        this.genericPreviewEmbed,
-        href,
-        fullWidth,
-        this.settings.centerEmbeds,
-        this.settings.keepLinksInPreview,
-      );
-      this._insertEmbed(a, embed);
+      if (this.settings[genericPreviewEmbed.enabledKey]) {
+        // fall back to creating a generic embed
+        const embed = this.createEmbed(
+          genericPreviewEmbed,
+          href,
+          fullWidth,
+          this.settings.centerEmbeds,
+          this.settings.keepLinksInPreview,
+        );
+        this._insertEmbed(a, embed);
+      }
     }
   }
 

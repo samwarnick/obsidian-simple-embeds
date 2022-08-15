@@ -5,7 +5,9 @@ import { getPreviewFromContent } from "link-preview-js";
 export class GenericPreviewEmbed implements EmbedSource {
   name = "Generic Preview";
   enabledKey: EnableEmbedKey = "replaceGenericLinks";
-  regex = new RegExp("");
+  // unmatchable regex
+  // this source is used as a fallback when other sources fail to match
+  regex = new RegExp("(?!)");
 
   createEmbed(
     link: string,
