@@ -38,11 +38,6 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
-    "got": "^12.3.1",
-    "link-preview-js": "^3.0.3",
-    "metascraper": "^5.30.2",
-    "metascraper-description": "^5.30.2",
-    "metascraper-image": "^5.30.2",
-    "metascraper-title": "^5.30.2"
+    "link-preview-js": "^3.0.3"
   }
 }
