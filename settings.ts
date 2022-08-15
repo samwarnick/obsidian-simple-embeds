@@ -12,6 +12,7 @@ export interface EnableEmbeds {
   replaceTwitterLinks: boolean;
   replaceVimeoLinks: boolean;
   replaceYouTubeLinks: boolean;
+  replaceGenericLinks: boolean;
 }
 export interface TwitterAppearanceSettings {
   twitterTheme: "auto" | "dark" | "light";
@@ -55,6 +56,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceTwitterLinks: true,
   replaceVimeoLinks: true,
   replaceYouTubeLinks: true,
+  replaceGenericLinks: true,
 
   twitterTheme: "auto",
 

@@ -13,6 +13,7 @@ import {
   TwitterEmbed,
   VimeoEmbed,
   YouTubeEmbed,
+  GenericPreviewEmbed,
 } from "./embeds";
 import { debounce, Debouncer, MarkdownView, Plugin } from "obsidian";
 import { DEFAULT_SETTINGS, PluginSettings } from "./settings";
@@ -36,6 +37,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new VimeoEmbed(),
     new RedditEmbed(),
   ];
+  genericPreviewEmbed = new GenericPreviewEmbed();
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
 
@@ -138,6 +140,16 @@ export default class SimpleEmbedsPlugin extends Plugin {
     if (embedSource) {
       const embed = this.createEmbed(
         embedSource,
+        href,
+        fullWidth,
+        this.settings.centerEmbeds,
+        this.settings.keepLinksInPreview,
+      );
+      this._insertEmbed(a, embed);
+    } else {
+      // fall back to creating a generic embed
+      const embed = this.createEmbed(
+        this.genericPreviewEmbed,
         href,
         fullWidth,
         this.settings.centerEmbeds,
