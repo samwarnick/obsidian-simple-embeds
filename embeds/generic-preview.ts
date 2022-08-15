@@ -1,5 +1,4 @@
-import { Setting, requestUrl } from "obsidian";
-import { PluginSettings } from "settings";
+import { requestUrl } from "obsidian";
 import { EmbedSource, EnableEmbedKey } from "./";
 import { getPreviewFromContent } from "link-preview-js";
 
@@ -11,8 +10,6 @@ export class GenericPreviewEmbed implements EmbedSource {
   createEmbed(
     link: string,
     container: HTMLElement,
-    settings: Readonly<PluginSettings>,
-    currentTheme: "light" | "dark",
   ) {
     const preview = document.createElement("a");
     preview.setAttr("href", link);
@@ -40,7 +37,12 @@ export class GenericPreviewEmbed implements EmbedSource {
           </div>
         `;
     }
-    loadPreview();
+
+    try {
+      loadPreview();
+    } catch {
+      preview.textContent = "Could not load preview";
+    }
 
     container.appendChild(preview);
     container.classList.add("generic-preview");
