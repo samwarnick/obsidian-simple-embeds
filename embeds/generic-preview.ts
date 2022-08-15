@@ -1,25 +1,12 @@
-import { Setting } from "obsidian";
+import { Setting, requestUrl } from "obsidian";
 import { PluginSettings } from "settings";
 import { EmbedSource, EnableEmbedKey } from "./";
-
-import got from "got";
-import metascraperModule from "metascraper";
-import metascraperTitleModule from "metascraper-title";
-import metascraperDescriptionModule from "metascraper-description";
-import metascraperImageModule from "metascraper-image";
-
-const metascraper = metascraperModule([
-  metascraperTitleModule(),
-  metascraperImageModule(),
-  metascraperDescriptionModule(),
-]);
+import { getPreviewFromContent } from "link-preview-js";
 
 export class GenericPreviewEmbed implements EmbedSource {
   name = "Generic Preview";
   enabledKey: EnableEmbedKey = "replaceGenericLinks";
-  // unmatchable regex
-  // this embed will be created as a fallback on all others failing to match
-  regex = new RegExp("(?!)");
+  regex = new RegExp("");
 
   createEmbed(
     link: string,
@@ -27,13 +14,31 @@ export class GenericPreviewEmbed implements EmbedSource {
     settings: Readonly<PluginSettings>,
     currentTheme: "light" | "dark",
   ) {
-    const preview = document.createElement("div");
-    preview.textContent = "Loading...";
+    const preview = document.createElement("a");
+    preview.setAttr("href", link);
+    preview.classList.add("preview");
+    preview.textContent = "Loading embed...";
 
     const loadPreview = async () => {
-      const { body: html, url } = await got(link);
-      const metadata = await metascraper({ html, url });
-      preview.innerHTML = `<h2>${metadata.title}</h2> <br> <p>${metadata.description}</p>`
+      const res = await requestUrl({ url: link });
+      const metadata = await getPreviewFromContent({
+        headers: res.headers,
+        data: res.text,
+        url: link
+      });
+
+      if (!("title" in metadata)) return;
+
+      preview.innerHTML = 
+        String.raw`
+          <div class="image-container">
+            ${ metadata.images.length ? String.raw`<img src="${metadata.images[0]}" />` : "" }
+          </div>
+          <div class="content">
+            <div class="title">${metadata.title}</div>
+            <div class="description">${metadata.description ? metadata.description : ""}</div>
+          </div>
+        `;
     }
     loadPreview();
 
