@@ -21,13 +21,13 @@ export class GenericPreviewEmbed implements EmbedSource {
     const preview = document.createElement("a");
     preview.setAttr("href", link);
     preview.classList.add("preview");
-    preview.textContent = "Loading embed...";
+    preview.textContent = "Loading preview...";
 
     const loadPreview = async () => {
       let metadata;
 
-      if (settings.useCacheForGenericLinks && link in plugin.linkPreviewCache) {
-        metadata = plugin.linkPreviewCache[link];
+      if (settings.useCacheForGenericLinks && link in settings.genericPreviewCache) {
+        metadata = settings.genericPreviewCache[link];
       } else {
         const res = await requestUrl({ url: link });
         metadata = await getPreviewFromContent({
@@ -37,7 +37,7 @@ export class GenericPreviewEmbed implements EmbedSource {
         });
 
         if (settings.useCacheForGenericLinks && "title" in metadata) {
-          plugin.linkPreviewCache[link] = metadata;
+          plugin.saveGenericPreviewCache(link, metadata);
         }
       }
 

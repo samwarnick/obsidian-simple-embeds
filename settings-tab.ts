@@ -66,7 +66,7 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
       });
     new Setting(containerEl)
       .setName("Clear link preview metadata cache")
-      .addButton(async (button) => {
+      .addButton((button) => {
         button
           .setButtonText("Clear")
           .onClick(async () => {
