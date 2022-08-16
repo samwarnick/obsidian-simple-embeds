@@ -44,7 +44,6 @@ export default class SimpleEmbedsPlugin extends Plugin {
   async onload() {
     console.log(`Loading ${this.manifest.name} v${this.manifest.version}`);
     await this.loadSettings();
-    console.log(this.settings);
     this.addSettingTab(new SimpleEmbedPluginSettingTab(this.app, this));
 
     this.currentTheme = this._getCurrentTheme();
