@@ -35,11 +35,23 @@ export interface AdvancedSettings {
   disableAutomaticEmbeds: boolean;
 }
 
+export interface GenericPreviewSettings {
+  useCacheForGenericLinks: boolean;
+  genericPreviewCache: {
+    [url: string]: {
+      title: string;
+      description: string;
+      images: string[];
+    }
+  };
+}
+
 export interface PluginSettings
   extends EnableEmbeds,
     TwitterAppearanceSettings,
     CodePenAppearanceSettings,
     RedditAppearanceSettings,
+    GenericPreviewSettings,
     AdvancedSettings {}
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -56,7 +68,10 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceTwitterLinks: true,
   replaceVimeoLinks: true,
   replaceYouTubeLinks: true,
+
   replaceGenericLinks: true,
+  useCacheForGenericLinks: true,
+  genericPreviewCache: {},
 
   twitterTheme: "auto",
 

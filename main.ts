@@ -20,8 +20,6 @@ import { DEFAULT_SETTINGS, PluginSettings } from "./settings";
 import { SimpleEmbedPluginSettingTab } from "./settings-tab";
 import { buildSimpleEmbedsViewPlugin } from "./view-plugin";
 
-const genericPreviewEmbed = new GenericPreviewEmbed();
-
 export default class SimpleEmbedsPlugin extends Plugin {
   settings: PluginSettings;
   embedSources: EmbedSource[] = [
@@ -38,10 +36,10 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new BandcampEmbed(),
     new VimeoEmbed(),
     new RedditEmbed(),
-    genericPreviewEmbed,
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
+  genericPreviewEmbed = new GenericPreviewEmbed();
 
   async onload() {
     console.log(`Loading ${this.manifest.name} v${this.manifest.version}`);
@@ -149,10 +147,10 @@ export default class SimpleEmbedsPlugin extends Plugin {
       );
       this._insertEmbed(a, embed);
     } else {
-      if (this.settings[genericPreviewEmbed.enabledKey]) {
+      if (this.settings.replaceGenericLinks) {
         // fall back to creating a generic embed
         const embed = this.createEmbed(
-          genericPreviewEmbed,
+          this.genericPreviewEmbed,
           href,
           fullWidth,
           this.settings.centerEmbeds,
@@ -187,6 +185,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
       container,
       this.settings,
       this.currentTheme,
+      this,
     );
     if (fullWidth) {
       embed.classList.add("full-width");

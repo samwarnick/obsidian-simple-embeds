@@ -1,3 +1,4 @@
+import SimpleEmbedsPlugin from "main";
 import { Setting } from "obsidian";
 import { EnableEmbeds, PluginSettings } from "../settings";
 
@@ -11,6 +12,7 @@ export interface EmbedSource {
     container: HTMLElement,
     settings: Readonly<PluginSettings>,
     currentTheme: "light" | "dark",
+    plugin: SimpleEmbedsPlugin,
   ): HTMLElement;
   afterAllEmbeds?(): void;
   updateTheme?(

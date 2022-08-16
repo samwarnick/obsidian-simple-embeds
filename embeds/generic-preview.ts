@@ -1,6 +1,8 @@
 import { requestUrl } from "obsidian";
 import { EmbedSource, EnableEmbedKey } from "./";
 import { getPreviewFromContent } from "link-preview-js";
+import { PluginSettings } from "settings";
+import SimpleEmbedsPlugin from "main";
 
 export class GenericPreviewEmbed implements EmbedSource {
   name = "Generic Preview";
@@ -12,6 +14,9 @@ export class GenericPreviewEmbed implements EmbedSource {
   createEmbed(
     link: string,
     container: HTMLElement,
+    settings: Readonly<PluginSettings>,
+    currentTheme: "light" | "dark",
+    plugin: SimpleEmbedsPlugin,
   ) {
     const preview = document.createElement("a");
     preview.setAttr("href", link);
@@ -19,12 +24,27 @@ export class GenericPreviewEmbed implements EmbedSource {
     preview.textContent = "Loading embed...";
 
     const loadPreview = async () => {
-      const res = await requestUrl({ url: link });
-      const metadata = await getPreviewFromContent({
-        headers: res.headers,
-        data: res.text,
-        url: link
-      });
+      let metadata;
+
+      if (settings.useCacheForGenericLinks && link in settings.genericPreviewCache) {
+        metadata = settings.genericPreviewCache[link];
+      } else {
+        const res = await requestUrl({ url: link });
+        metadata = await getPreviewFromContent({
+          headers: res.headers,
+          data: res.text,
+          url: link
+        });
+
+        if (settings.useCacheForGenericLinks && "title" in metadata) {
+          plugin.saveSettings({
+            genericPreviewCache: {
+              ...settings.genericPreviewCache,
+              [link]: metadata,
+            }
+          })
+        }
+      }
 
       if (!("title" in metadata)) return;
 

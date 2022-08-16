@@ -43,6 +43,33 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
       });
     });
 
+    // Settings for generic link previews
+    containerEl.createEl("h3", { text: "Generic Link Previews" });
+
+    new Setting(containerEl)
+      .setName("Show generic previews for links")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.settings.replaceGenericLinks)
+          .onChange(async (enabled) => {
+            await this.saveSettings({ replaceGenericLinks: enabled });
+          });
+      });
+    new Setting(containerEl)
+      .setName("Use a cache for link preview metadata")
+      .addToggle((toggle) => {
+        toggle
+          .setValue(this.plugin.settings.useCacheForGenericLinks)
+          .onChange(async (enabled) => {
+            await this.saveSettings({ useCacheForGenericLinks: enabled });
+          });
+      });
+    new Setting(containerEl)
+      .setName("Clear link preview metadata cache")
+      .addButton(async () => {
+        await this.saveSettings({ genericPreviewCache: {} });
+      });
+
     // Any additional settings for embed sources.
     containerEl.createEl("h3", { text: "Appearance" });
 
