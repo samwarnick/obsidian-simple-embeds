@@ -16,7 +16,7 @@ import {
   GenericPreviewEmbed,
 } from "./embeds";
 import { debounce, Debouncer, MarkdownView, Plugin } from "obsidian";
-import { DEFAULT_SETTINGS, PluginSettings } from "./settings";
+import { DEFAULT_SETTINGS, GenericPreviewMetadata, PluginSettings } from "./settings";
 import { SimpleEmbedPluginSettingTab } from "./settings-tab";
 import { buildSimpleEmbedsViewPlugin } from "./view-plugin";
 
@@ -39,11 +39,16 @@ export default class SimpleEmbedsPlugin extends Plugin {
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
+
   genericPreviewEmbed = new GenericPreviewEmbed();
+  // use a separate property to save to cache during session
+  // saveSettings triggers reload and results in a loop
+  linkPreviewCache: { [url: string]: GenericPreviewMetadata };
 
   async onload() {
     console.log(`Loading ${this.manifest.name} v${this.manifest.version}`);
     await this.loadSettings();
+    this.linkPreviewCache = this.settings.genericPreviewCache;
     this.addSettingTab(new SimpleEmbedPluginSettingTab(this.app, this));
 
     this.currentTheme = this._getCurrentTheme();
@@ -84,6 +89,12 @@ export default class SimpleEmbedsPlugin extends Plugin {
   }
 
   onunload() {
+    // save the cache before unloading
+    console.log("Saving link preview cache to settings");
+    this.saveSettings({
+      genericPreviewCache: this.linkPreviewCache,
+    });
+
     console.log(`Unloading ${this.manifest.name}`);
     this.processedMarkdown = null;
   }

@@ -66,8 +66,12 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
       });
     new Setting(containerEl)
       .setName("Clear link preview metadata cache")
-      .addButton(async () => {
-        await this.saveSettings({ genericPreviewCache: {} });
+      .addButton(async (button) => {
+        button
+          .setButtonText("Clear")
+          .onClick(async () => {
+            await this.saveSettings({ genericPreviewCache: {} });
+          });
       });
 
     // Any additional settings for embed sources.

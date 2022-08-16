@@ -35,14 +35,16 @@ export interface AdvancedSettings {
   disableAutomaticEmbeds: boolean;
 }
 
+export interface GenericPreviewMetadata {
+  title: string;
+  description: string;
+  images: string[];
+}
+
 export interface GenericPreviewSettings {
   useCacheForGenericLinks: boolean;
   genericPreviewCache: {
-    [url: string]: {
-      title: string;
-      description: string;
-      images: string[];
-    }
+    [url: string]: GenericPreviewMetadata;
   };
 }
 
