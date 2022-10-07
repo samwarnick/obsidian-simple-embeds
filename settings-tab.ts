@@ -70,7 +70,9 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
         button
           .setButtonText("Clear")
           .onClick(async () => {
-            await this.saveSettings({ genericPreviewCache: {} });
+            await this.app.vault.adapter.write(this.plugin.genericPreviewCacheFile, "{}");
+            this.plugin.genericPreviewCache = {};
+            await this.plugin.saveSettings({});
           });
       });
 

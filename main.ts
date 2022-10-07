@@ -15,7 +15,7 @@ import {
   YouTubeEmbed,
   GenericPreviewEmbed,
 } from "./embeds";
-import { debounce, Debouncer, MarkdownView, Plugin } from "obsidian";
+import { debounce, Debouncer, MarkdownView, Plugin, TFile } from "obsidian";
 import { DEFAULT_SETTINGS, GenericPreviewMetadata, PluginSettings } from "./settings";
 import { SimpleEmbedPluginSettingTab } from "./settings-tab";
 import { buildSimpleEmbedsViewPlugin } from "./view-plugin";
@@ -40,6 +40,10 @@ export default class SimpleEmbedsPlugin extends Plugin {
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
   genericPreviewEmbed = new GenericPreviewEmbed();
+  genericPreviewCache = {} as {
+    [url: string]: GenericPreviewMetadata;
+  };
+  genericPreviewCacheFile = "genericPreviewCache.json";
 
   async onload() {
     console.log(`Loading ${this.manifest.name} v${this.manifest.version}`);
@@ -81,6 +85,20 @@ export default class SimpleEmbedsPlugin extends Plugin {
         }
       }),
     );
+
+    // Load file for generic preview cache
+    if (!this.app.vault.adapter.exists(this.genericPreviewCacheFile)) {
+      await this.app.vault.create("genericPreviewCache.json", "{}");
+    }
+    try {
+      const contents = JSON.parse(
+        await this.app.vault.adapter.read(this.genericPreviewCacheFile)
+      );
+      this.genericPreviewCache = contents;
+    } catch (e) {
+      console.error("Error reading generic preview cache file");
+      console.error(e);
+    }
   }
 
   onunload() {
@@ -103,8 +121,13 @@ export default class SimpleEmbedsPlugin extends Plugin {
   }
 
   async saveGenericPreviewCache(link: string, metadata: GenericPreviewMetadata) {
-    this.settings.genericPreviewCache[link] = metadata;
-    await this.saveData(this.settings);
+    if (this.genericPreviewCacheFile) {
+      this.genericPreviewCache[link] = metadata;
+      await this.app.vault.adapter.write(
+        this.genericPreviewCacheFile,
+        JSON.stringify(this.genericPreviewCache)
+      );
+    }
   }
 
   private _getCurrentTheme(): "dark" | "light" {

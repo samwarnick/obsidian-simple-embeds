@@ -26,8 +26,8 @@ export class GenericPreviewEmbed implements EmbedSource {
     const loadPreview = async () => {
       let metadata;
 
-      if (settings.useCacheForGenericLinks && link in settings.genericPreviewCache) {
-        metadata = settings.genericPreviewCache[link];
+      if (settings.useCacheForGenericLinks && link in plugin.genericPreviewCache) {
+        metadata = plugin.genericPreviewCache[link];
       } else {
         const res = await requestUrl({ url: link });
         metadata = await getPreviewFromContent({

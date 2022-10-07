@@ -43,9 +43,9 @@ export interface GenericPreviewMetadata {
 
 export interface GenericPreviewSettings {
   useCacheForGenericLinks: boolean;
-  genericPreviewCache: {
-    [url: string]: GenericPreviewMetadata;
-  };
+  // genericPreviewCache: {
+  //   [url: string]: GenericPreviewMetadata;
+  // };
 }
 
 export interface PluginSettings
@@ -71,9 +71,8 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceVimeoLinks: true,
   replaceYouTubeLinks: true,
 
-  replaceGenericLinks: true,
+  replaceGenericLinks: false,
   useCacheForGenericLinks: true,
-  genericPreviewCache: {},
 
   twitterTheme: "auto",
 
