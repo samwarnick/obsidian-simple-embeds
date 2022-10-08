@@ -39,11 +39,13 @@ export default class SimpleEmbedsPlugin extends Plugin {
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
+
   genericPreviewEmbed = new GenericPreviewEmbed();
-  genericPreviewCache = {} as {
+  genericPreviewCache = null as {
     [url: string]: GenericPreviewMetadata;
-  };
+  } | null;
   genericPreviewCacheFile = "genericPreviewCache.json";
+  cacheFileLoadPromise = null as Promise<void>;
 
   async onload() {
     console.log(`Loading ${this.manifest.name} v${this.manifest.version}`);
@@ -87,18 +89,21 @@ export default class SimpleEmbedsPlugin extends Plugin {
     );
 
     // Load file for generic preview cache
-    if (!this.app.vault.adapter.exists(this.genericPreviewCacheFile)) {
-      await this.app.vault.create("genericPreviewCache.json", "{}");
-    }
-    try {
-      const contents = JSON.parse(
-        await this.app.vault.adapter.read(this.genericPreviewCacheFile)
-      );
-      this.genericPreviewCache = contents;
-    } catch (e) {
-      console.error("Error reading generic preview cache file");
-      console.error(e);
-    }
+    const loadCacheFile = async () => {
+      if (!this.app.vault.adapter.exists(this.genericPreviewCacheFile)) {
+        await this.app.vault.create("genericPreviewCache.json", "{}");
+      }
+      try {
+        const contents = JSON.parse(
+          await this.app.vault.adapter.read(this.genericPreviewCacheFile)
+        );
+        this.genericPreviewCache = contents;
+      } catch (e) {
+        console.error("Error reading generic preview cache file");
+        console.error(e);
+      }
+    };
+    this.cacheFileLoadPromise = loadCacheFile();
   }
 
   onunload() {
