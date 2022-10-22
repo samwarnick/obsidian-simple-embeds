@@ -16,7 +16,11 @@ import {
   GenericPreviewEmbed,
 } from "./embeds";
 import { debounce, Debouncer, MarkdownView, Plugin, TFile } from "obsidian";
-import { DEFAULT_SETTINGS, GenericPreviewMetadata, PluginSettings } from "./settings";
+import {
+  DEFAULT_SETTINGS,
+  GenericPreviewMetadata,
+  PluginSettings,
+} from "./settings";
 import { SimpleEmbedPluginSettingTab } from "./settings-tab";
 import { buildSimpleEmbedsViewPlugin } from "./view-plugin";
 
@@ -44,7 +48,9 @@ export default class SimpleEmbedsPlugin extends Plugin {
   genericPreviewCache = null as {
     [url: string]: GenericPreviewMetadata;
   } | null;
-  genericPreviewCacheFile = "genericPreviewCache.json";
+  genericPreviewCacheFile =
+    this.app.vault.configDir +
+    "/plugins/obsidian-simple-embeds/genericPreviewCache.json";
   cacheFileLoadPromise = null as Promise<void>;
 
   async onload() {
@@ -65,7 +71,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
 
     this.registerMarkdownPostProcessor((el, ctx) => {
       const anchors = el.querySelectorAll(
-        "a.external-link",
+        "a.external-link"
       ) as NodeListOf<HTMLAnchorElement>;
       anchors.forEach((anchor) => {
         this._handleAnchor(anchor);
@@ -85,13 +91,15 @@ export default class SimpleEmbedsPlugin extends Plugin {
             });
           });
         }
-      }),
+      })
     );
 
     // Load file for generic preview cache
     const loadCacheFile = async () => {
-      if (!this.app.vault.adapter.exists(this.genericPreviewCacheFile)) {
-        await this.app.vault.create("genericPreviewCache.json", "{}");
+      if (
+        !(await this.app.vault.adapter.exists(this.genericPreviewCacheFile))
+      ) {
+        await this.app.vault.create(this.genericPreviewCacheFile, "{}");
       }
       try {
         const contents = JSON.parse(
@@ -125,7 +133,10 @@ export default class SimpleEmbedsPlugin extends Plugin {
     });
   }
 
-  async saveGenericPreviewCache(link: string, metadata: GenericPreviewMetadata) {
+  async saveGenericPreviewCache(
+    link: string,
+    metadata: GenericPreviewMetadata
+  ) {
     if (this.genericPreviewCacheFile) {
       this.genericPreviewCache[link] = metadata;
       await this.app.vault.adapter.write(
@@ -152,7 +163,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
 
     const replaceWithEmbed = this.shouldReplaceWithEmbed(
       a.innerText,
-      isWithinText,
+      isWithinText
     );
     const fullWidth = a.innerText.includes("|fullwidth");
     // Remove any allowed properties:
@@ -176,7 +187,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
         href,
         fullWidth,
         this.settings.centerEmbeds,
-        this.settings.keepLinksInPreview,
+        this.settings.keepLinksInPreview
       );
       this._insertEmbed(a, embed);
     } else {
@@ -187,7 +198,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
           href,
           fullWidth,
           this.settings.centerEmbeds,
-          this.settings.keepLinksInPreview,
+          this.settings.keepLinksInPreview
         );
         this._insertEmbed(a, embed);
       }
@@ -209,7 +220,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     link: string,
     fullWidth: boolean,
     centered: boolean,
-    keepLinks: boolean,
+    keepLinks: boolean
   ) {
     const container = document.createElement("div");
     container.classList.add("embed-container");
@@ -218,7 +229,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
       container,
       this.settings,
       this.currentTheme,
-      this,
+      this
     );
     if (fullWidth) {
       embed.classList.add("full-width");
