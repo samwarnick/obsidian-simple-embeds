@@ -239,7 +239,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     if (keepLinksInPreview && placement === "above") {
       parent.insertBefore(container, a);
     } else if (keepLinksInPreview && placement === "below") {
-      container.insertAfter(a);
+      a.after(container);
     } else {
       parent.replaceChild(container, a);
     }
