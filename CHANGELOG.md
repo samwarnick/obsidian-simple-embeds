@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
+# [1.12.2]
+
+### Fixed
+
+- Fixed issue with keeping links and placing embeds below.
+  - Thanks [@udbhav-s](https://github.com/samwarnick/obsidian-simple-embeds/pull/53) for fixing!
+
 # [1.12.1]
 
 ### Fixed
@@ -151,7 +159,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release 🎉
 
-[unreleased]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.12.0...HEAD
+[unreleased]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.12.2...HEAD
+[1.12.2]:  https://github.com/samwarnick/obsidian-simple-embeds/compare/1.12.1...1.12.2
+[1.12.1]:  https://github.com/samwarnick/obsidian-simple-embeds/compare/1.12.0...1.12.1
 [1.12.0]:  https://github.com/samwarnick/obsidian-simple-embeds/compare/1.11.0...1.12.0
 [1.11.0]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.10.2...1.11.0
 [1.10.2]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.10.1...1.10.2
