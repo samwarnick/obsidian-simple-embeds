@@ -12,6 +12,7 @@ export interface EnableEmbeds {
   replaceTwitterLinks: boolean;
   replaceVimeoLinks: boolean;
   replaceYouTubeLinks: boolean;
+  replaceGenericLinks: boolean;
 }
 export interface TwitterAppearanceSettings {
   twitterTheme: "auto" | "dark" | "light";
@@ -34,11 +35,25 @@ export interface AdvancedSettings {
   disableAutomaticEmbeds: boolean;
 }
 
+export interface GenericPreviewMetadata {
+  title: string;
+  description: string;
+  images: string[];
+}
+
+export interface GenericPreviewSettings {
+  useCacheForGenericLinks: boolean;
+  // genericPreviewCache: {
+  //   [url: string]: GenericPreviewMetadata;
+  // };
+}
+
 export interface PluginSettings
   extends EnableEmbeds,
     TwitterAppearanceSettings,
     CodePenAppearanceSettings,
     RedditAppearanceSettings,
+    GenericPreviewSettings,
     AdvancedSettings {}
 
 export const DEFAULT_SETTINGS: PluginSettings = {
@@ -55,6 +70,9 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceTwitterLinks: true,
   replaceVimeoLinks: true,
   replaceYouTubeLinks: true,
+
+  replaceGenericLinks: false,
+  useCacheForGenericLinks: true,
 
   twitterTheme: "auto",
 

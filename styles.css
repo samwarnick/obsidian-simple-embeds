@@ -80,6 +80,41 @@
   left: calc(50% - 75px);
 }
 
+/* Generic Preview */
+.embed-container.generic-preview .preview {
+  text-decoration: none;
+  color: inherit;
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  margin: 0.5rem 0;
+}
+.embed-container.generic-preview .preview:hover {
+  background: var(--background-secondary-alt);
+  cursor: pointer;
+}
+
+.embed-container.generic-preview .preview .image-container {
+  max-width: 100px;
+}
+
+.embed-container.generic-preview .preview .content {
+  margin: 0.5rem;
+  margin-left: 1rem;
+}
+
+.embed-container.generic-preview .preview .content .title {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.embed-container.generic-preview .preview .content .description {
+  color: var(--text-muted);
+}
+
 /* Settings */
 .simple-embeds-settings details > summary {
   display: flex;
