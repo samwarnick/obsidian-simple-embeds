@@ -50,7 +50,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
   } | null;
   genericPreviewCacheFile =
     this.app.vault.configDir +
-    "/plugins/obsidian-simple-embeds/genericPreviewCache.json";
+    "/plugins/simple-embeds/genericPreviewCache.json";
   cacheFileLoadPromise = null as Promise<void>;
 
   async onload() {
