@@ -1,6 +1,6 @@
 import { EmbedSource } from "embeds";
 import SimpleEmbedsPlugin from "main";
-import { App, PluginSettingTab, Setting } from "obsidian";
+import { App, Platform, PluginSettingTab, Setting } from "obsidian";
 import { PluginSettings } from "settings";
 
 export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
@@ -45,6 +45,16 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
 
     // Settings for generic link previews
     containerEl.createEl("h3", { text: "Generic Link Previews" });
+    containerEl.createEl(
+      "p",
+      {
+        cls: "setting-item-description",
+      },
+      (el) => {
+        el.innerHTML =
+          "Desktop only";
+      },
+    );
 
     new Setting(containerEl)
       .setName("Show generic previews for links")
@@ -54,7 +64,8 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
           .onChange(async (enabled) => {
             await this.saveSettings({ replaceGenericLinks: enabled });
           });
-      });
+      })
+      .setDisabled(Platform.isMobile);
     new Setting(containerEl)
       .setName("Use a cache for link preview metadata")
       .addToggle((toggle) => {
@@ -63,7 +74,8 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
           .onChange(async (enabled) => {
             await this.saveSettings({ useCacheForGenericLinks: enabled });
           });
-      });
+      })
+      .setDisabled(Platform.isMobile);
     new Setting(containerEl)
       .setName("Clear link preview metadata cache")
       .addButton((button) => {
@@ -74,7 +86,8 @@ export class SimpleEmbedPluginSettingTab extends PluginSettingTab {
             this.plugin.genericPreviewCache = {};
             await this.plugin.saveSettings({});
           });
-      });
+      })
+      .setDisabled(Platform.isMobile);
 
     // Any additional settings for embed sources.
     containerEl.createEl("h3", { text: "Appearance" });

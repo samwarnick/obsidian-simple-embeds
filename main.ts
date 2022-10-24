@@ -15,7 +15,7 @@ import {
   YouTubeEmbed,
   GenericPreviewEmbed,
 } from "./embeds";
-import { debounce, Debouncer, MarkdownView, Plugin, TFile } from "obsidian";
+import { debounce, Debouncer, MarkdownView, Platform, Plugin, TFile } from "obsidian";
 import {
   DEFAULT_SETTINGS,
   GenericPreviewMetadata,
@@ -191,7 +191,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
       );
       this._insertEmbed(a, embed);
     } else {
-      if (this.settings.replaceGenericLinks) {
+      if (Platform.isDesktopApp && this.settings.replaceGenericLinks) {
         // fall back to creating a generic embed
         const embed = this.createEmbed(
           this.genericPreviewEmbed,
