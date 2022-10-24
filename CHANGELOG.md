@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [1.13.0]
+
+### Added
+
+- A new generic link embed.
+  - Enable to show metadata from any link that does not match any other enabled embed sources.
+  - For now, desktop only. Looking into an issue with a dependency on iOS.
+  - Thanks [@udbhav-s](https://github.com/samwarnick/obsidian-simple-embeds/pull/47) for adding!
 
 # [1.12.2]
 
@@ -18,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Migrated to CodeMirror 6.0 required in Obsidian v0.15.
+  - Thanks [@NomarCub](https://github.com/samwarnick/obsidian-simple-embeds/pull/50) for fixing!
 
 # [1.12.0]
 
