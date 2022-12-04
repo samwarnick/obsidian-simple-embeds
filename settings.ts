@@ -11,6 +11,7 @@ export interface EnableEmbeds {
   replaceRedditLinks: boolean;
   replaceTwitterLinks: boolean;
   replaceVimeoLinks: boolean;
+  replaceWhimsicalLinks: boolean;
   replaceYouTubeLinks: boolean;
   replaceGenericLinks: boolean;
 }
@@ -69,6 +70,7 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   replaceRedditLinks: true,
   replaceTwitterLinks: true,
   replaceVimeoLinks: true,
+  replaceWhimsicalLinks: true,
   replaceYouTubeLinks: true,
 
   replaceGenericLinks: false,

@@ -38,5 +38,6 @@ export * from "./noteflight";
 export * from "./reddit";
 export * from "./twitter";
 export * from "./vimeo";
+export * from "./whimsical";
 export * from "./youtube";
 export * from "./generic-preview";

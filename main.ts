@@ -12,6 +12,7 @@ import {
   RedditEmbed,
   TwitterEmbed,
   VimeoEmbed,
+  WhimsicalEmbed,
   YouTubeEmbed,
   GenericPreviewEmbed,
 } from "./embeds";
@@ -40,6 +41,7 @@ export default class SimpleEmbedsPlugin extends Plugin {
     new BandcampEmbed(),
     new VimeoEmbed(),
     new RedditEmbed(),
+    new WhimsicalEmbed(),
   ];
   processedMarkdown: Debouncer<[]>;
   currentTheme: "dark" | "light";
