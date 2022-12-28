@@ -7,6 +7,7 @@ import {
   ViewUpdate,
   WidgetType,
 } from "@codemirror/view";
+import { Platform } from "obsidian";
 import { EmbedSource } from "./embeds";
 import SimpleEmbedsPlugin from "./main";
 
@@ -114,6 +115,11 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
                 source.regex.test(line.text)
               );
             });
+
+            if (!embedSource && Platform.isDesktopApp && plugin.settings.replaceGenericLinks) {
+              embedSource = plugin.genericPreviewEmbed;
+            }
+
             const isWithinText = this.isWithinText(text);
             const replaceWithEmbed = plugin.shouldReplaceWithEmbed(
               mdLink,
@@ -122,7 +128,17 @@ export function buildSimpleEmbedsViewPlugin(plugin: SimpleEmbedsPlugin) {
             const fullWidth = mdLink.includes("|fullwidth");
             definitions.push(...this.hideOptions(mdLink, start));
             if (embedSource && replaceWithEmbed) {
-              const link = line.text.match(embedSource.regex).first();
+              let link;
+
+              if (embedSource == plugin.genericPreviewEmbed) {
+                const mdLinkRegex = /^\[([\w\s\d]+)\]\((https?:\/\/[\w\d./?=#]+)\)$/;
+                const [_full, _text, url] = line.text.match(mdLinkRegex);
+                if (!url) continue;
+                link = url;
+              }
+              else {
+                link = line.text.match(embedSource.regex).first();
+              }
 
               definitions.push(
                 this.createWidget(link, fullWidth, embedSource, start, end),
