@@ -183,6 +183,11 @@ export default class SimpleEmbedsPlugin extends Plugin {
       return this.settings[source.enabledKey] && source.regex.test(href);
     });
 
+    // Fall back to creating a generic embed if no source found
+    if (!embedSource && Platform.isDesktopApp && this.settings.replaceGenericLinks) {
+      embedSource = this.genericPreviewEmbed;
+    }
+
     if (embedSource) {
       const embed = this.createEmbed(
         embedSource,
@@ -192,18 +197,6 @@ export default class SimpleEmbedsPlugin extends Plugin {
         this.settings.keepLinksInPreview
       );
       this._insertEmbed(a, embed);
-    } else {
-      if (Platform.isDesktopApp && this.settings.replaceGenericLinks) {
-        // fall back to creating a generic embed
-        const embed = this.createEmbed(
-          this.genericPreviewEmbed,
-          href,
-          fullWidth,
-          this.settings.centerEmbeds,
-          this.settings.keepLinksInPreview
-        );
-        this._insertEmbed(a, embed);
-      }
     }
   }
 
