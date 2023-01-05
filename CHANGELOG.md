@@ -5,12 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [1.14.1]
+
+### Fixed
+
+- Fix generic links not working in live preview.
+  - Thanks [@udbhav-s](https://github.com/samwarnick/obsidian-simple-embeds/pull/62) for fixing!
+
 # [1.14.0]
 
 ### Added
 
 - Support for [Whimsical](https://whimsical.com) links.
   - Thanks to [@toddmoy](https://github.com/samwarnick/obsidian-simple-embeds/pull/58) for adding!
+
 # [1.13.0]
 
 ### Added
