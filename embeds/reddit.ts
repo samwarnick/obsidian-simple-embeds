@@ -2,26 +2,46 @@ import { Setting } from "obsidian";
 import { PluginSettings } from "settings";
 import { EmbedSource, EnableEmbedKey } from "./";
 
+const REDDIT_LINK = new RegExp(
+  /https:\/\/(?:www\.)?reddit\.com\/r\/(?<comment>.+)/
+);
+
 export class RedditEmbed implements EmbedSource {
   name = "Reddit";
   enabledKey: EnableEmbedKey = "replaceRedditLinks";
-  regex = /https:\/\/(?:www\.)?reddit\.com\/r\/(?<comment>.+)/;
+  regex = REDDIT_LINK;
 
   createEmbed(
     link: string,
     container: HTMLElement,
     settings: Readonly<PluginSettings>,
-    currentTheme: "light" | "dark",
+    currentTheme: "light" | "dark"
   ) {
+    const theme = settings.redditTheme === "dark" ? "dark" : "light";
     const blockquote = document.createElement("blockquote");
     blockquote.classList.add("reddit-embed-bq");
     blockquote.style.height = "500px";
     blockquote.setAttribute("data-embed-height", "500");
-    blockquote.setAttribute("data-embed-locale", settings.redditLocale || "auto");
-    blockquote.setAttribute("data-embed-showmedia", settings.redditHideMedia ? "false" : "true");
-    blockquote.setAttribute("data-embed-theme", settings.redditTheme === "dark" ? "dark" : "light");
-    blockquote.setAttribute("data-embed-showedits", settings.redditHideEdits ? "false" : "true");
-    blockquote.setAttribute("data-embed-showusername", settings.redditHideUsername ? "false" : "true");
+    blockquote.setAttribute(
+      "data-embed-locale",
+      settings.redditLocale || "auto"
+    );
+    blockquote.setAttribute(
+      "data-embed-showmedia",
+      settings.redditHideMedia ? "false" : "true"
+    );
+    blockquote.setAttribute(
+      "data-embed-theme",
+      theme
+    );
+    blockquote.setAttribute(
+      "data-embed-showedits",
+      settings.redditHideEdits ? "false" : "true"
+    );
+    blockquote.setAttribute(
+      "data-embed-showusername",
+      settings.redditHideUsername ? "false" : "true"
+    );
     blockquote.setAttribute("data-embed-created", new Date().toISOString());
 
     const aLink = document.createElement("a");
@@ -29,41 +49,36 @@ export class RedditEmbed implements EmbedSource {
     aLink.textContent = link;
     blockquote.appendChild(aLink);
 
-    if (settings.redditTheme === "dark") {
-      blockquote.setAttribute("data-embed-theme", "dark");
-    } else if (currentTheme === "dark") {
+    if (theme === "dark" || currentTheme === "dark") {
       blockquote.setAttribute("data-embed-theme", "dark");
     }
 
     const script = document.createElement("script");
     script.async = true;
-    script.src = "https://embed.reddit.com/widgets.js";
+    script.src = `https://embed.reddit.com/widgets.js`;
     script.setAttribute("charset", "UTF-8");
 
-    container.appendChild(blockquote);
-    container.appendChild(script);
-    return container;
+    const newContainer = document.createElement("div");
+    newContainer.appendChild(blockquote);
+    newContainer.appendChild(script);
+
+    container.replaceWith(newContainer);
+    return newContainer;
   }
 
   updateTheme(theme: "dark" | "light", settings: Readonly<PluginSettings>) {
-    const redditEmbeds = document.querySelectorAll(
-      ".embed-container.reddit blockquote.reddit-embed-bq"
-    );
-    redditEmbeds.forEach((blockquote) => {
-      if (settings.redditTheme === "dark") {
-        blockquote.setAttribute("data-embed-theme", "dark");
-      } else if (theme === "dark") {
-        blockquote.setAttribute("data-embed-theme", "dark");
-      } else {
-        blockquote.removeAttribute("data-embed-theme");
-      }
+    this.blockquotes.forEach((blockquote) => {
+      blockquote.classList.toggle(
+        "dark",
+        settings.redditTheme === "dark" || theme === "dark"
+      );
     });
   }
 
   createAdditionalSettings(
     containerEl: HTMLElement,
     settings: Readonly<PluginSettings>,
-    saveSettings: (updates: Partial<PluginSettings>) => Promise<void>,
+    saveSettings: (updates: Partial<PluginSettings>) => Promise<void>
   ) {
     const settingsList: Setting[] = [];
 
@@ -100,7 +115,7 @@ export class RedditEmbed implements EmbedSource {
           });
       });
     settingsList.push(hidePostContentSetting);
-    
+
     // Dark mode setting
     const darkModeSetting = new Setting(containerEl)
       .setName("Display in Dark Mode")
