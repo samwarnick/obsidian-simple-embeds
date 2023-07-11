@@ -20,7 +20,6 @@ export class RedditEmbed implements EmbedSource {
     const theme = settings.redditTheme === "dark" ? "dark" : "light";
     const blockquote = document.createElement("blockquote");
     blockquote.classList.add("reddit-embed-bq");
-    blockquote.style.height = "500px";
     blockquote.setAttribute("data-embed-height", "500");
     blockquote.setAttribute(
       "data-embed-locale",
