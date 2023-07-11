@@ -10,6 +10,7 @@ export class RedditEmbed implements EmbedSource {
   name = "Reddit";
   enabledKey: EnableEmbedKey = "replaceRedditLinks";
   regex = REDDIT_LINK;
+  blockquotes: any;
 
   createEmbed(
     link: string,
@@ -66,7 +67,7 @@ export class RedditEmbed implements EmbedSource {
   }
 
   updateTheme(theme: "dark" | "light", settings: Readonly<PluginSettings>) {
-    this.blockquotes.forEach((blockquote) => {
+    this.blockquotes.forEach((blockquote: { classList: { toggle: (arg0: string, arg1: boolean) => void; }; }) => {
       blockquote.classList.toggle(
         "dark",
         settings.redditTheme === "dark" || theme === "dark"

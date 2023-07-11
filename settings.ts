@@ -27,6 +27,10 @@ export interface CodePenAppearanceSettings {
 }
 export interface RedditAppearanceSettings {
   redditTheme: "auto" | "dark" | "light";
+  redditLocale: string;
+  redditHideMedia: boolean;
+  redditHideEdits: boolean;
+  redditHideUsername: boolean;
 }
 export interface AdvancedSettings {
   enableInLivePreview: boolean;
@@ -51,11 +55,11 @@ export interface GenericPreviewSettings {
 
 export interface PluginSettings
   extends EnableEmbeds,
-    TwitterAppearanceSettings,
-    CodePenAppearanceSettings,
-    RedditAppearanceSettings,
-    GenericPreviewSettings,
-    AdvancedSettings {}
+  TwitterAppearanceSettings,
+  CodePenAppearanceSettings,
+  RedditAppearanceSettings,
+  GenericPreviewSettings,
+  AdvancedSettings { }
 
 export const DEFAULT_SETTINGS: PluginSettings = {
   replaceAppleMusicLinks: true,
@@ -91,4 +95,8 @@ export const DEFAULT_SETTINGS: PluginSettings = {
   keepLinksInPreview: false,
   embedPlacement: "above",
   disableAutomaticEmbeds: false,
+  redditLocale: "auto",
+  redditHideMedia: false,
+  redditHideEdits: false,
+  redditHideUsername: false
 };
