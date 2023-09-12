@@ -1,3 +1,7 @@
+---
+**Notice**: This plugin is no longer actively maintained. Feel free to fork and create a new version.
+---
+
 # Simple Embeds
 
 This [Obsidian](https://obsidian.md) plugin will turn Twitter and YouTube links into embeds when the file is previewed, without changing the contents of your file. Even works when hovering over internal links. 
