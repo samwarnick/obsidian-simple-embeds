@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+# [1.15.0]
+
+### Added
+
+- improved Reddit embed support
+  - Thanks to [@chardinson](https://github.com/samwarnick/obsidian-simple-embeds/pull/71)!
+
 # [1.14.1]
 
 ### Fixed
@@ -182,7 +189,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Initial release 🎉
 
-[unreleased]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.14.0...HEAD
+[unreleased]: https://github.com/samwarnick/obsidian-simple-embeds/compare/1.15.0...HEAD
+[1.15.0]:  https://github.com/samwarnick/obsidian-simple-embeds/compare/1.14.1...1.15.0
+[1.14.1]:  https://github.com/samwarnick/obsidian-simple-embeds/compare/1.14.0...1.14.1
 [1.14.0]:  https://github.com/samwarnick/obsidian-simple-embeds/compare/1.13.0...1.14.0
 [1.13.0]:  https://github.com/samwarnick/obsidian-simple-embeds/compare/1.12.2...1.13.0
 [1.12.2]:  https://github.com/samwarnick/obsidian-simple-embeds/compare/1.12.1...1.12.2
