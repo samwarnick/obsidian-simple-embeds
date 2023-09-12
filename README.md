@@ -1,6 +1,6 @@
----
+
 **Notice**: This plugin is no longer actively maintained. Feel free to fork and create a new version.
----
+
 
 # Simple Embeds
 
