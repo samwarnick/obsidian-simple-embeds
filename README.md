@@ -31,6 +31,7 @@ By default, most embeds have a max width of 550px (the max width of Twitter embe
 - Noteflight
 - Twitter
 - YouTube
+- Reddit
 
 ## Styling
 
@@ -47,6 +48,7 @@ Each embed is wrapped in a container with the class of `.embed-container` and a 
 | Noteflight | `.noteflight` |
 | Twitter | `.twitter` |
 | YouTube | `.youtube` |
+| Reddit | `.reddit` |
 
 You can use these in your own [CSS snippets](https://help.obsidian.md/How+to/Add+custom+styles#Use+Themes+and+or+CSS+snippets). For example, if you would like to make all YouTube embeds full width, you could add the following:
 
